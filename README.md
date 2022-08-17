@@ -1,8 +1,7 @@
 # 🐈 OASIP||-AT-2_Ching-cheng-hanji 🐁
 
-## Software Management
-- [Trello](https://trello.com/invite/b/tKVIS3xb/06df9e0ddb9fbf59a12d30e4ebe415a9/project-management)
-
+## ER diagram
+![image](./ER_diagram.png)
 ## Design communications between client and server.
 
 - Protocol => HTTP,TCP SSL,TLS
@@ -27,17 +26,13 @@
 | api/users/{id} | DELETE | ลบ user ตาม id ที่ระบุ |
 | api/users/{id} | PUT | อัพเดท user ในฐานข้อมูลตาม id ที่ระบุ |
 
-
-## ER diagram
-![image](./ER_diagram.png)
-
-## Setup dev env
+## Setup dev env and Software Management
 - [GitHub](https://github.com/pataradee/Ching-cheng-hanji.git)
-- [Task Board](https://app.clickup.com/36721829/v/li/174788706)
+- [Trello](https://trello.com/invite/b/tKVIS3xb/06df9e0ddb9fbf59a12d30e4ebe415a9/project-management)
 - Tools => 
     - Front-end : VS Code
     - Back-end : IntelliJ
-    - Dev ops : Docker
+    - DevOps : Docker
     - Database : MySQL workbench
 - Communications => Discord, MS Team
 - Port
