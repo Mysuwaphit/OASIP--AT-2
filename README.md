@@ -27,7 +27,7 @@
 | api/users/{id} | PUT | อัพเดท user ในฐานข้อมูลตาม id ที่ระบุ |
 
 ## Setup dev env and Software Management
-- [GitHub](https://github.com/pataradee/Ching-cheng-hanji.git)
+- [GitHub](https://github.com/Mysuwaphit/OASIP--AT-2.git)
 - [Trello](https://trello.com/invite/b/tKVIS3xb/06df9e0ddb9fbf59a12d30e4ebe415a9/project-management)
 - Tools => 
     - Front-end : VS Code
