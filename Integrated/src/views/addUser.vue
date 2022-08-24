@@ -38,7 +38,7 @@ let validatedEmail = ref('')
 const validateEmail = () => {
   const  validEmail = /^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   yourEmail.value.length > 50? alert("Your name is too long. It's must at least 1 character and no more than 100 character.") : (yourEmail.value = yourEmail.value.trim())
-  return yourEmail.value.match(validEmail)? validatedEmail.value = yourEmail.value.trim() : alert("Please insert your email again.") 
+  return yourEmail.value.match(validEmail)? validatedEmail.value = yourEmail.value.trim() : alert("Please insert your email again. your email is not valid.") 
   && userList.value.forEach((e) => e.email != yourEmail.value.trim()? (yourEmail.value = yourEmail.value.trim()) : (yourEmail.value = '', alert("Please insert your email again! Your email must be unique.")))
 }
 
@@ -83,11 +83,11 @@ const addUser = async (validatedName,validatedEmail,selectedRole) => {
             <form>
             <div class="form-group">
                 <label class="col-form-label">Username :</label> {{yourName.length}}/100
-                <input type="text" class="form-control" id="recipient-name" v-model="yourName" @focusout="validateName" required>
+                <input type="text" class="form-control" id="recipient-name" v-model="yourName" @focusout="validateName" maxlength="100" required>
             </div>
             <div class="form-group">
                 <label for="message-text" class="col-form-label">Email :</label> {{yourEmail.length}}/50
-                <textarea class="form-control" id="message-text"  v-model="yourEmail" @focusout ="validateEmail"></textarea>
+                <input class="form-control" id="message-text"  v-model="yourEmail" @focusout ="validateEmail" maxlength="50" required>
             </div>
             <!-- Choose Role -->
             <div>
