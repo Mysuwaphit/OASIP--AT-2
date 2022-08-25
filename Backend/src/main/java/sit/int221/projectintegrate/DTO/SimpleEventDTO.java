@@ -26,8 +26,7 @@ public class SimpleEventDTO {
     private LocalDateTime startTime;
     private Integer duration;
     private String eventNotes;
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "eventCategoryId")
     private EventCategory eventCategory;
 
