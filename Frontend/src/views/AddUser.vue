@@ -53,7 +53,7 @@ const clearForm = () => {
 }
 
 const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) => {
-  if(firstPassword === secondPassword){
+  if(firstPassword === secondPassword.value){
     console.log('success')
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
       method: 'POST',
@@ -115,7 +115,7 @@ const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" id="cancel" data-dismiss="modal" @click="clearForm()">cancel</button>
             <button type="button" class="btn btn-primary trigger-btn" id="save"  href="#myModal" data-toggle="modal"
-             @click="addUser(validatedName,validatedEmail,selectedRole)">save</button>
+             @click="addUser(validatedName,validatedEmail,selectedRole,firstPassword)">save</button>
              <!-- :disabled="validateAll" -->
             <button type="button" class="material-symbols-outlined" @click="goBack" id="backhome">arrow_back</button>
         </div>
