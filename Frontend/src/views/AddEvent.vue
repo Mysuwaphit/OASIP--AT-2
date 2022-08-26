@@ -156,11 +156,11 @@ const clearForm = () => {
             <form>
             <div class="form-group">
                 <label class="col-form-label">Your name :</label>
-                <input type="text" placeholder="E.g: Wang Jackson" class="form-control" id="recipient-name" maxlength="100" v-model="bookingName" required> 
+                <input type="text" placeholder="E.g: Wang Jackson" class="form-control" id="recipient-name" maxlength="100" v-model="bookingName" @focusout="validateName()" required> 
             </div>
             <div class="form-group">
                 <label class="col-form-label">Email :</label>
-                <input type="email" class="form-control" placeholder="js@gmail.com" id="recipient-email" maxlength="200" v-model="bookingEmail" required> 
+                <input type="email" class="form-control" placeholder="js@gmail.com" id="recipient-email" maxlength="200" v-model="bookingEmail" @focusout="validateEmail(bookingEmail)" required> 
             </div>
 
             <!-- Choose Category -->
@@ -194,8 +194,7 @@ const clearForm = () => {
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" id="cancel" data-dismiss="modal" @click="clearForm()">cancel</button>
             <button type="button" class="btn btn-primary trigger-btn" id="save" href="#myModal" data-toggle="modal" :disabled="validateDateTime"
-            @click="validateEmail(bookingEmail) && addEvent(validatedName,validatedEmail,selectCategory,yourISODateTime,description,getDuration)" 
-            @mouseup="validateName">save</button>
+            @click="addEvent(validatedName,validatedEmail,selectCategory,yourISODateTime,description,getDuration)">save</button>
             <button type="button" class="material-symbols-outlined" @click="goBack" id="backhome">arrow_back</button>
         </div>
       </div>

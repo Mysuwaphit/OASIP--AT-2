@@ -8,6 +8,8 @@ const allRole = ['admin','lecturer','student']
 const selectedRole = ref('student')
 const yourName = ref('')
 const yourEmail = ref('')
+const firstPassword = ref('')
+const secondPassword = ref('')
 
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
@@ -41,6 +43,7 @@ const validateEmail = () => {
   return yourEmail.value.match(validEmail)? validatedEmail.value = yourEmail.value.trim() : alert("Please insert your email again. your email is not valid.") 
   && userList.value.forEach((e) => e.email != yourEmail.value.trim()? (yourEmail.value = yourEmail.value.trim()) : (yourEmail.value = '', alert("Please insert your email again! Your email must be unique.")))
 }
+const validatePassword = (e) => {(e === null || e === '')?  alert('Password cannot be null'):(e.length >= 8? console.log('password>=8'): alert("Password must at least 8 and at most 14."))}
 
 const clearForm = () => {
   yourName.value = ''      
@@ -49,28 +52,30 @@ const clearForm = () => {
   console.log('Clear category');
 }
 
-const addUser = async (validatedName,validatedEmail,selectedRole) => {
-  console.log('success')
-   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify(
-      {
-        username: validatedName,
-        email: validatedEmail,
-        roles: selectedRole
-        // createdOn: null,
-        // updatedOn: null
-      }
-    )
-  })
-  if (res.status === 201 && res.status !== 400) {
-    const add = await res.json()
-    userList.value.push(add)
-    console.log('added successfully')
-  } else console.log('error, cannot be added')
+const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) => {
+  if(firstPassword === secondPassword){
+    console.log('success')
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(
+        {
+          username: validatedName,
+          email: validatedEmail,
+          roles: selectedRole,
+          userpassword: firstPassword
+        }
+      )
+    })
+    
+    if (res.status === 201 && res.status !== 400) {
+      const add = await res.json()
+      userList.value.push(add)
+      console.log('added successfully')
+    } else console.log('error, cannot be added')
+  } else alert("Your password doesn't match.")
 }
 
 </script>
@@ -95,6 +100,14 @@ const addUser = async (validatedName,validatedEmail,selectedRole) => {
                 <select name="role" id="select" v-model="selectedRole" required>
                     <option v-for="(role,index) in allRole" :key="index" :value="role"> {{ role }} </option> 
                 </select>
+            </div>
+            <div class="form-group">
+                <label for="message-text" class="col-form-label">Password :</label> {{firstPassword.length}}/14
+                <input type="password" class="form-control" id="message-text" min="8" max="14"  v-model="firstPassword" @focusout ="validatePassword(firstPassword)" maxlength="50" required>
+            </div>
+            <div class="form-group">
+                <label for="message-text" class="col-form-label">Comfirm Password :</label> {{secondPassword.length}}/14
+                <input type="password" class="form-control" id="message-text" min="8" max="14" v-model="secondPassword" @focusout ="validatePassword(secondPassword)" maxlength="50" required>
             </div>
             
             </form>
