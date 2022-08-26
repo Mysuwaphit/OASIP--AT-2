@@ -1,7 +1,7 @@
 drop database if exists Event;
 create database Event default character set utf8;
 -- SET GLOBAL time_zone = "Asia/Thailand";
-SET GLOBAL time_zone = system;
+-- SET GLOBAL time_zone = system;
 SET time_zone = "+07:00";
 SET @@session.time_zone = "+07:00";
 use Event;
