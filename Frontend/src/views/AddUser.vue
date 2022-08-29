@@ -91,8 +91,8 @@ const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) 
                 <input type="text" class="form-control" id="recipient-name" v-model="yourName" @focusout="validateName" maxlength="100" required>
             </div>
             <div class="form-group">
-                <label for="message-text" class="col-form-label">Email :</label> {{yourEmail.length}}/50
-                <input class="form-control" id="message-text"  v-model="yourEmail" @focusout ="validateEmail" maxlength="50" required>
+                <label for="recipient-name" class="col-form-label">Email :</label> {{yourEmail.length}}/50
+                <input class="form-control" id="recipient-name"  v-model="yourEmail" @focusout ="validateEmail" maxlength="50" required>
             </div>
             <!-- Choose Role -->
             <div>
@@ -102,12 +102,12 @@ const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) 
                 </select>
             </div>
             <div class="form-group">
-                <label for="message-text" class="col-form-label">Password :</label> {{firstPassword.length}}/14
-                <input type="password" class="form-control" id="message-text" min="8" max="14"  v-model="firstPassword" @focusout ="validatePassword(firstPassword)" maxlength="50" required>
+                <label for="recipient-name" class="col-form-label">Password :</label> {{firstPassword.length}}/14
+                <input type="password" class="form-control" id="recipient-name" min="8" max="14"  v-model="firstPassword" @focusout ="validatePassword(firstPassword)" maxlength="50" required>
             </div>
             <div class="form-group">
-                <label for="message-text" class="col-form-label">Comfirm Password :</label> {{secondPassword.length}}/14
-                <input type="password" class="form-control" id="message-text" min="8" max="14" v-model="secondPassword" @focusout ="validatePassword(secondPassword)" maxlength="50" required>
+                <label for="recipient-name" class="col-form-label">Comfirm Password :</label> {{secondPassword.length}}/14
+                <input type="password" class="form-control" id="recipient-name" min="8" max="14" v-model="secondPassword" @focusout ="validatePassword(secondPassword)" maxlength="50" required>
             </div>
             
             </form>
@@ -136,7 +136,7 @@ const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) 
   border-radius:30px;
   font-size: 25px;
   margin-top: 90px;
-  top:600px;
+  top:620px;
   left: 390px;
   position: absolute;
 }
@@ -171,8 +171,9 @@ h1 {
   border-radius:30px;
   font-size: 25px;
   font-weight: bold;
-  margin-top: 200px;
+  margin-top: 100px;
   position: absolute;
+  
 }
 
 #select {
