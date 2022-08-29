@@ -1,11 +1,11 @@
 package sit.int221.projectintegrate.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.Instant;
+
 import java.time.LocalDateTime;
 
 @Getter

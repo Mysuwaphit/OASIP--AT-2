@@ -1,9 +1,15 @@
 package sit.int221.projectintegrate.Controller;
 
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import sit.int221.projectintegrate.DTO.SimpleLoginDTO;
 import sit.int221.projectintegrate.DTO.SimpleUserDTO;
 import sit.int221.projectintegrate.Entities.User;
 import sit.int221.projectintegrate.Repository.UserRepository;
@@ -34,17 +40,33 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
-
-//    @PostMapping({""})
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public User create(@Valid @RequestBody User newUser) {
-//        return this.repository.saveAndFlush(newUser);
-//    }
     @PostMapping({""})
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody SimpleUserDTO newUser) {
         return this.userService.addUser(newUser);
     }
+
+    @PostMapping("/match")
+    public void login(@Validated @RequestBody SimpleLoginDTO body) {
+
+        if(userService.matcher(body.getEmail(), body.getUserpassword()) == true){
+            throw new ResponseStatusException(HttpStatus.OK,"Password Match!");
+        }else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Password Not Match!");
+        }
+
+    }
+
+//    @PostMapping("/login")
+//    public String login(@Valid @RequestBody User email,User password) {
+//        if(userService.checkEmail(email)) {
+//                return "student Exists";
+//            }
+//        if (userService.checkPassword(password)){
+//            return "Incorrect Password";
+//             }
+//        return null;
+//    }
 
     @DeleteMapping({"/{userId}"})
     public void delete(@PathVariable Integer userId) {
