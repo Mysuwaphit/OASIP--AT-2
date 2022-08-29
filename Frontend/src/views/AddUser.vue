@@ -8,6 +8,8 @@ const allRole = ['admin','lecturer','student']
 const selectedRole = ref('student')
 const yourName = ref('')
 const yourEmail = ref('')
+const firstPassword = ref('')
+const secondPassword = ref('')
 
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
@@ -41,6 +43,7 @@ const validateEmail = () => {
   return yourEmail.value.match(validEmail)? validatedEmail.value = yourEmail.value.trim() : alert("Please insert your email again. your email is not valid.") 
   && userList.value.forEach((e) => e.email != yourEmail.value.trim()? (yourEmail.value = yourEmail.value.trim()) : (yourEmail.value = '', alert("Please insert your email again! Your email must be unique.")))
 }
+const validatePassword = (e) => {(e === null || e === '')?  alert('Password cannot be null'):(e.length >= 8? console.log('password>=8'): alert("Password must at least 8 and at most 14."))}
 
 const clearForm = () => {
   yourName.value = ''      
@@ -49,28 +52,30 @@ const clearForm = () => {
   console.log('Clear category');
 }
 
-const addUser = async (validatedName,validatedEmail,selectedRole) => {
-  console.log('success')
-   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify(
-      {
-        username: validatedName,
-        email: validatedEmail,
-        roles: selectedRole
-        // createdOn: null,
-        // updatedOn: null
-      }
-    )
-  })
-  if (res.status === 201 && res.status !== 400) {
-    const add = await res.json()
-    userList.value.push(add)
-    console.log('added successfully')
-  } else console.log('error, cannot be added')
+const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) => {
+  if(firstPassword === secondPassword.value){
+    console.log('success')
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(
+        {
+          username: validatedName,
+          email: validatedEmail,
+          roles: selectedRole,
+          userpassword: firstPassword
+        }
+      )
+    })
+    
+    if (res.status === 201 && res.status !== 400) {
+      const add = await res.json()
+      userList.value.push(add)
+      console.log('added successfully')
+    } else console.log('error, cannot be added')
+  } else alert("Your password doesn't match.")
 }
 
 </script>
@@ -86,8 +91,8 @@ const addUser = async (validatedName,validatedEmail,selectedRole) => {
                 <input type="text" class="form-control" id="recipient-name" v-model="yourName" @focusout="validateName" maxlength="100" required>
             </div>
             <div class="form-group">
-                <label for="message-text" class="col-form-label">Email :</label> {{yourEmail.length}}/50
-                <input class="form-control" id="message-text"  v-model="yourEmail" @focusout ="validateEmail" maxlength="50" required>
+                <label for="recipient-name" class="col-form-label">Email :</label> {{yourEmail.length}}/50
+                <input class="form-control" id="recipient-name"  v-model="yourEmail" @focusout ="validateEmail" maxlength="50" required>
             </div>
             <!-- Choose Role -->
             <div>
@@ -96,13 +101,21 @@ const addUser = async (validatedName,validatedEmail,selectedRole) => {
                     <option v-for="(role,index) in allRole" :key="index" :value="role"> {{ role }} </option> 
                 </select>
             </div>
+            <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Password :</label> {{firstPassword.length}}/14
+                <input type="password" class="form-control" id="recipient-name" min="8" max="14"  v-model="firstPassword" @focusout ="validatePassword(firstPassword)" maxlength="50" required>
+            </div>
+            <div class="form-group">
+                <label for="recipient-name" class="col-form-label">Comfirm Password :</label> {{secondPassword.length}}/14
+                <input type="password" class="form-control" id="recipient-name" min="8" max="14" v-model="secondPassword" @focusout ="validatePassword(secondPassword)" maxlength="50" required>
+            </div>
             
             </form>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" id="cancel" data-dismiss="modal" @click="clearForm()">cancel</button>
             <button type="button" class="btn btn-primary trigger-btn" id="save"  href="#myModal" data-toggle="modal"
-             @click="addUser(validatedName,validatedEmail,selectedRole)">save</button>
+             @click="addUser(validatedName,validatedEmail,selectedRole,firstPassword)">save</button>
              <!-- :disabled="validateAll" -->
             <button type="button" class="material-symbols-outlined" @click="goBack" id="backhome">arrow_back</button>
         </div>
@@ -123,7 +136,7 @@ const addUser = async (validatedName,validatedEmail,selectedRole) => {
   border-radius:30px;
   font-size: 25px;
   margin-top: 90px;
-  top:600px;
+  top:620px;
   left: 390px;
   position: absolute;
 }
@@ -158,8 +171,9 @@ h1 {
   border-radius:30px;
   font-size: 25px;
   font-weight: bold;
-  margin-top: 200px;
+  margin-top: 100px;
   position: absolute;
+  
 }
 
 #select {

@@ -65,35 +65,50 @@ props.users.sort((a, b) => (a.username > b.username) ? 1 : -1);
 //   left:430px;
 //   bottom:110px;
 // }
-#email{
-  position: relative;
+// #email{
+//   position: relative;
+//   left: 600px;
+//   bottom:108px;
+// }
+#email {
   left: 600px;
   bottom:108px;
-}
-#username{
+  align-items: center;  
   position: relative;
-  left: 70px;
-  bottom:30px;
+  width: 200px;
+  height:22px;
+  overflow: hidden;
+  overflow-y:auto;
 }
+
+// #username{
+//   position: relative;
+//   left: 70px;
+//   bottom:30px;
+// }
+
 #role{
   position: relative;
   left:390px;
   background-color: rgba(196, 196, 196, 1);
   border-radius: 20px;
   width: 90px;
-  bottom: 70px;
+  height: 25px;
+  bottom: 67px;
   text-align: center;
 }
-// #username {
-//   left: 780px;
-//   bottom:190px;
-//   align-items: center;  
-//   position: relative;
-//   width: 200px;
-//   height:20px;
-//   overflow: hidden;
-//   overflow-y:auto;
-// }
+
+#username {
+  left: 100px;
+  bottom:28px;
+  align-items: center;  
+  position: relative;
+  width: 200px;
+  height:22px;
+  overflow: hidden;
+  overflow-y:auto;
+}
+
 #circle {
   width: 15px;
   height: 15px;

@@ -3,14 +3,7 @@ import { ref, onBeforeMount, computed} from "vue";
 import { useRouter , useRoute } from 'vue-router';
 import SuccessBox from '../components/successBox.vue'
 
-const allRole = ['admin','lecturer','student']
-const nameValue = ref('')
-const emailValue = ref('')
-const roleValue = ref('student')
-let yourName = ref(nameValue.value)
-let yourEmail = ref(emailValue.value)
-let selectedRole = ref(roleValue.value) 
-let  success = ref(false)
+
 
 const {params} = useRoute()
 const appRouter = useRouter()
@@ -33,31 +26,40 @@ onBeforeMount(async () => {
   await getUserList();
 });
 
+const allRole = ['admin','lecturer','student']
+const roleValue = ref('student')
+let yourName = ref(userListDetails.username)
+let yourEmail = ref(userListDetails.email)
+let selectedRole = ref(roleValue.value) 
+let  success = ref(false)
+
 const updateUser = async (editUserId,validatedName,validatedEmail,selectedRole) => {
-  console.log('success')
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/${editUserId}`,{
-    method: 'PUT',
-    headers: {
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify(
-      {
-      username: validatedName,
-      email: validatedEmail,
-      roles: selectedRole
-      }
-    )
-  })
-  console.log('olo')
-  if (res.status === 200) {
-    const add = await res.json()
-    userList.value.push(add)
-    clearForm();
-    console.log('added successfully')
-    success.value = true
-  } else {
-    console.log('error, cannot be added')
-  }
+  if((validatedName===null && validatedName==='') || (validatedEmail===null && validatedEmail==='')){
+    console.log('success')
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/${editUserId}`,{
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(
+        {
+        username: validatedName,
+        email: validatedEmail,
+        roles: selectedRole
+        }
+      )
+    })
+    console.log('olo')
+    if (res.status === 200) {
+      const add = await res.json()
+      userList.value.push(add)
+      clearForm();
+      console.log('added successfully')
+      success.value = true
+    } else {
+      console.log('error, cannot be added')
+    }
+  }else alert("Cannot input null or no value")
 }
 
 // Validate
@@ -72,13 +74,14 @@ let validatedEmail = ref('')
 const validateEmail = () => {
   const  validEmail = /^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   yourEmail.value.length > 50? alert("Your name is too long. It's must at least 1 character and no more than 100 character.") : (yourEmail.value = yourEmail.value.trim())
-  return yourEmail.value.match(validEmail)? validatedEmail.value = yourEmail.value.trim() : alert("Please insert your email again.") && (yourEmail.value.trim() != userListDetails.email.value? (validatedEmail.value = yourEmail.value.trim()) : alert("Please insert your email again! Your email must be unique."))
+  yourEmail.value.match(validEmail)? validatedEmail.value = yourEmail.value.trim() : alert("Please insert your email again. your email is not valid.") 
+  return  userList.value.forEach((e) => e.email != yourEmail.value.trim()? (yourEmail.value = yourEmail.value.trim()) : (yourEmail.value = '', alert("Please insert your email again! Your email must be unique.")))
 }
 
 
 const clearForm = () => {
-  yourName.value = nameValue.value
-  yourEmail.value = emailValue.value
+  yourName.value = userListDetails.username
+  yourEmail.value = userListDetails.email
   selectedRole = roleValue.value
   goBack()
   return console.log('clear');
@@ -98,7 +101,7 @@ const clearForm = () => {
                   </div>
                   <div class="form-group">
                     <label class="col-form-label">Email :</label>
-                    <input type="email" class="form-control" :placeholder="userListDetail.email" id="recipient-email" maxlength="50" v-model="yourEmail" @focusout="validateEmail"  required> 
+                    <input class="form-control" :placeholder="userListDetail.email" id="recipient-email" maxlength="50" v-model="yourEmail" @focusout="validateEmail"  required> 
                   </div>
                   <!-- Choose Role -->
                   <div>
@@ -112,7 +115,8 @@ const clearForm = () => {
               <!-- Footer -->
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="cancel" data-dismiss="modal" @click="clearForm()">cancel</button>
-                <button type="button" class="btn btn-primary trigger-btn" id="save" href="#myModal" data-toggle="modal" @click="updateUser(userListDetail.id,validatedName,validatedEmail,selectedRole)">save</button>
+                <button type="button" class="btn btn-primary trigger-btn" id="save" href="#myModal" data-toggle="modal"
+                @click="updateUser(userListDetail.id,validatedName,validatedEmail,selectedRole)">save</button>
                 <button type="button" class="material-symbols-outlined" @click="goBack" id="backhome">arrow_back</button>
               </div>
         </div>

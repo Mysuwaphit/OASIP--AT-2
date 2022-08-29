@@ -1,6 +1,7 @@
 <script setup>
 import SideBar from './components/Sidebar.vue' 
 import { useRouter } from 'vue-router'
+import Login from '../src/views/login.vue';
 
 const appRouter = useRouter()
 const goToAddEvent = () => appRouter.push({ name: 'addEvent' })
@@ -15,8 +16,14 @@ const goToAddEvent = () => appRouter.push({ name: 'addEvent' })
             <SideBar/>
         </div> 
 
+        <button type="button" id="login" class="btn btn-primary trigger-btn" data-toggle="modal" data-target=".loginbox">Log In</button>
+
         <!-- Add event -->
         <!-- <button type="button" @click="goToAddEvent" class="addEvent" id="myBtn">+ Add Event</button> -->
+        <div class="login">
+            <Login/>
+        </div>
+        
 
         <!-- Show view -->
          <router-view/>
@@ -69,6 +76,45 @@ body{
     height: 120vh;
     overflow: auto;
 }
+
+#login:hover{
+  transform: scale(1.08); 
+  transition: all .2s ease-in-out;
+}
+
+#login{
+  margin-left:1780px;
+}
+
+#login:active {
+  background-color: rgba(146, 44, 64, 1);
+  color:white;
+  outline: none;
+  border: none;
+}
+
+#login:focus {
+  background-color: rgba(146, 44, 64, 1);
+  color:white;
+//   outline: none;
+//   border: none;
+}
+
+#login{
+  background-color: white;  
+  color:black;
+  // rgba(146, 44, 64, 1)
+  border-radius: 40px;
+  padding: 10px 15px;
+  margin-right:15px;
+  margin-bottom:5px;
+  margin-top: 10px;
+  position: absolute;
+  border: none;
+}
+
+
+
 button{
     cursor: pointer;
     appearance: none;
