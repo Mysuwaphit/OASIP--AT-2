@@ -103,11 +103,11 @@ const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) 
             </div>
             <div class="form-group">
                 <label for="recipient-name" class="col-form-label">Password :</label> {{firstPassword.length}}/14
-                <input type="password" class="form-control" id="recipient-name" min="8" max="14"  v-model="firstPassword" @focusout ="validatePassword(firstPassword)" maxlength="50" required>
+                <input type="password" class="form-control" id="recipient-name" minlength="8" maxlength="14"  v-model="firstPassword" @focusout ="validatePassword(firstPassword)" required>
             </div>
             <div class="form-group">
                 <label for="recipient-name" class="col-form-label">Comfirm Password :</label> {{secondPassword.length}}/14
-                <input type="password" class="form-control" id="recipient-name" min="8" max="14" v-model="secondPassword" @focusout ="validatePassword(secondPassword)" maxlength="50" required>
+                <input type="password" class="form-control" id="recipient-name" minlength="8" maxlength="14" v-model="secondPassword" @focusout ="validatePassword(secondPassword)" required>
             </div>
             
             </form>
