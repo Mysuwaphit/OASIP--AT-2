@@ -112,7 +112,6 @@ const removeUser = async (removeUserId) => {
 			<div class="modal-body">
 				<p>Do you really want to delete these? This process cannot be undone.</p>
 			</div>
-			{{userOrEvent}}
 			<div class="modal-footer justify-content-center">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
 				<button type="button" class="btn btn-secondary btn-danger" id="delete" data-dismiss="modal" @click="userOrEvent === true? removeUser($route.params.userId):removeEvent($route.params.eventId),userOrEvent != userOrEvent">DELETE</button>

@@ -11,6 +11,7 @@ import UserListing from '../views/userListing.vue'
 import UserDetail from '../views/userDetails.vue'
 import EditUser from '../views/editUser.vue'
 import AddUser from '../views/AddUser.vue'
+// import Login from '../views/login.vue'
 
 // import.meta.env.VITE_BASE_URL
 const history = createWebHistory('/at2/')
@@ -76,6 +77,11 @@ const routes = [
       name: 'AddUser',
       component: AddUser
     }
+    // {
+    //   path: '/login',
+    //   name: 'Login',
+    //   component: Lo
+    // }
 
 ]
   
