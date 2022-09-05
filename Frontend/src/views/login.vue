@@ -5,6 +5,7 @@ import StatusBox from '../components/statusBox.vue';
 
 const appRouter = useRouter()
 const goToAddUser = () => appRouter.push({ name: 'AddUser' })
+const goToHome = () => appRouter.push({ name: 'EventListing' })
 const yourEmail = ref('')
 const yourPassword = ref('')
 let checkedUser = ref(false)
@@ -30,15 +31,13 @@ const validateEmail = () => {
   // yourEmail.value.length > 50? alert("Your name is too long. It's must at least 1 character and no more than 100 character.") : (yourEmail.value = yourEmail.value.trim())
   return yourEmail.value.match(validEmail)? validatedEmail.value = yourEmail.value.trim() : alert("Please insert your email again. your email is not valid.") 
 }
-// let validatedPassword = ref('')
-// const validatePassword = () => {yourPassword.value === ''?  alert('Password cannot be null'):(yourPassword.value.length >= 8? validatedPassword.value = yourPassword.value: alert("Password must at least 8 and at most 14."))}
 
 const checkUser = async (yourInputEmail,yourInputPassword) => {
 
   if(yourInputEmail != '' && yourInputPassword != ''){
     checkedUser.value = true
     console.log(checkedUser.value);
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/match`,{
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/login`,{
       method: 'POST',
       headers: {
         'content-type': 'application/json'
@@ -62,7 +61,9 @@ const checkUser = async (yourInputEmail,yourInputPassword) => {
 </script>
  
 <template>
-    <div class="loginbox modal" v-if="checkedUser === false">
+<!-- @edit="(i) => checkedUser = i" @success="goToHome" -->
+  <StatusBox v-if="checkedUser === true" :status="status" />
+  <div class="loginbox" id="demo-1">
       <img class="logo" src="../assets/businessman.png"/>
         <h1>Sign In</h1>
         <form>
@@ -70,15 +71,19 @@ const checkUser = async (yourInputEmail,yourInputPassword) => {
             <input type="email" placeholder="Enter Email" v-model="yourEmail" @focusout ="validateEmail" required>
             <label>Password</label>     
             <input type="password" placeholder="Enter Password" minlength="8" maxlength="14" v-model="yourPassword" required>
-            <button type="button" class="btn btn-primary trigger-btn" id="check" href="#myModal" data-toggle="modal"  @click="checkUser(validatedEmail,yourPassword)">submit</button>
+            <button type="button" class="btn btn-primary trigger-btn" id="check" data-toggle="modal" data-target="#demo-2" data-dismiss="modal"  @click="checkUser(validatedEmail,yourPassword)">submit</button>
         </form>
-        <p @click="goToAddUser">Forgot Password?</p>
-    </div>
-    <StatusBox v-if="checkedUser === true" :status="status" class="modal"/>
+        <p @click="goToAddUser">Didn't have account?</p>
+  </div>
 </template>
 
  
 <style scoped>
+.close {
+	position: absolute;
+	top: 5px;
+	right: 2px;
+}
 .loginbox{
     width: 400px;
     height: 550px;
@@ -145,7 +150,7 @@ p{
     margin-top: 20px;
     text-decoration: none;
     color: white;
-    margin-left: 30%;
+    margin-left: 25%;
 }
 
 #check:hover{

@@ -55,7 +55,7 @@ const clearForm = () => {
 const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) => {
   if(firstPassword === secondPassword.value){
     console.log('success')
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/signup`,{
       method: 'POST',
       headers: {
         'content-type': 'application/json'

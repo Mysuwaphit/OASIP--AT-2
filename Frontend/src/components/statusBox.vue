@@ -1,26 +1,21 @@
 <script setup>
-import { ref, onBeforeMount } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 defineProps({
   status: {
     type: Number,
     require: true
-  },
-  checkedUser: {
-    type: Boolean,
-    require: true
   }
 })
 
 const appRouter = useRouter()
-const goBack = () => appRouter.go(-1)
 const goToHome = () => appRouter.push({ name: 'EventListing' })
-
+const reload = () => window.location.reload();
 </script>
  
 <template>
-<div class="container modal fade" id="myModal">
+<div class="container modal" id="demo-2" tabindex="-1">
 	<div class="success" v-if="status === 200">
 		<div class="msg-success">
 			<div class="letter"></div>
@@ -28,17 +23,17 @@ const goToHome = () => appRouter.push({ name: 'EventListing' })
 		<div class="shadow"></div>
 		<h1 class="title">Success</h1>
 		<p class="message">Wohoo! Login successfully.</p>
-		<button class="btn btn-success" data-dismiss="modal" @click="goToHome">Continue</button>
+		<button type="button" class="btn btn-success" data-dismiss="modal" @click="goToHome">Continue</button>
 	</div>
 
-	<div class="error" v-if="status === 401">
+	<div class="error" v-if="status === 401" >
 		<div class="msg-error">
 			<div class="letter"></div>
 		</div>
 		<div class="shadow"></div>
 		<h1 class="title">Error</h1>
 		<p class="message">Whoops! Sorry Password Incorrect.</p>
-		<button class="btn btn-error" data-dismiss="modal" @click="goBack && (checkedUser = false)">Retry</button>
+		<button type="button" class="btn btn-error" value="Reload Page" @click="reload">Retry</button>
 	</div>
 
     <div class="error" v-if="status === 404">
@@ -48,7 +43,7 @@ const goToHome = () => appRouter.push({ name: 'EventListing' })
 		<div class="shadow"></div>
 		<h1 class="title">Error</h1>
 		<p class="message">Whoops! Sorry a user with specified email DOES NOT exist.</p>
-		<button class="btn btn-error" data-dismiss="modal" @click="goBack  && (checkedUser = false)">Retry</button>
+		<button type="button" class="btn btn-error" value="Reload Page" @click="reload">Retry</button>
 	</div>
 </div>
 </template>
@@ -90,13 +85,15 @@ body {
 
 // Flash messages
 .container {
-	position: relative;
-	display: flex;
+	position: absolute;
+	display:flex;
 	width: 720px;
 	height: 100vh;
 	margin: auto;
-  text-align: center;
+  	text-align: center;
 	align-items: center;
+	margin-left: 40%;
+	margin-top: 5%;
 }
 
 .success,
@@ -319,13 +316,23 @@ body {
 	letter-spacing: 2px;
 }
 
-.message {
+.success .message {
 	position: absolute;
 	bottom: 20%;
 	font-size: 110%;
 	color: $white;
 	text-align: center;
 	letter-spacing: .5px;
+	margin-left: 18%;
+}
+.error .message {
+	position: absolute;
+	bottom: 20%;
+	font-size: 110%;
+	color: $white;
+	text-align: center;
+	letter-spacing: .5px;
+	margin-left: 8%;
 }
 
 // Button - Continue & Retry

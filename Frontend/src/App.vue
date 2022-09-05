@@ -5,6 +5,7 @@ import Login from '../src/views/login.vue';
 
 const appRouter = useRouter()
 const goToAddEvent = () => appRouter.push({ name: 'addEvent' })
+const goToLogin = () => appRouter.push({ name: 'Login'})
 
 </script>
  
@@ -16,14 +17,10 @@ const goToAddEvent = () => appRouter.push({ name: 'addEvent' })
             <SideBar/>
         </div> 
 
-        <button type="button" id="login" class="btn btn-primary trigger-btn" data-toggle="modal" data-target=".loginbox">Log In</button>
+        <button type="button" id="login" class="btn btn-primary trigger-btn" @click="goToLogin">Log In</button>
 
         <!-- Add event -->
         <!-- <button type="button" @click="goToAddEvent" class="addEvent" id="myBtn">+ Add Event</button> -->
-        <div class="login">
-            <Login/>
-        </div>
-        
 
         <!-- Show view -->
          <router-view/>

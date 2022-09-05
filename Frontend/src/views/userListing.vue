@@ -42,19 +42,6 @@ const text = ref('')
 
 const checkEmail = () => filterEvent.value = eventList.value.filter((e) => e.bookingEmail == yourEmail.value , text.value = "No have any users.")
 const listAllUser = () => filterUser.value = userList.value
-
-// const checkDate = () => {
-//   return filterEvent.value = eventList.value.filter((e) => {
-//     const date = ref(new Date(e.startTime[0],e.startTime[1]-1,e.startTime[2],e.startTime[3],e.startTime[4]))
-//     date.value = date.value.toLocaleDateString();
-//     const select = ref(yourDateTime.value)
-//     select.value = new Date(select.value).toLocaleDateString();
-//     text.value = "No have any users."
-//     console.log(`subSelect : ${select.value}`); 
-//     console.log(`subDate : ${date.value}`);
-//     return date.value == select.value
-//   })
-// }
 const sortedUser = userList.value.sort((a, b) => (a.username > b.username) ? 1 : -1);
 </script>
  
