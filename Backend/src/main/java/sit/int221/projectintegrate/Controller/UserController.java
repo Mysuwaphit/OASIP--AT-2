@@ -2,18 +2,26 @@ package sit.int221.projectintegrate.Controller;
 
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
-import sit.int221.projectintegrate.DTO.SimpleLoginDTO;
-import sit.int221.projectintegrate.DTO.SimpleUserDTO;
+import sit.int221.projectintegrate.DTO.*;
 import sit.int221.projectintegrate.Entities.User;
+import sit.int221.projectintegrate.Repository.JwtUserRepository;
 import sit.int221.projectintegrate.Repository.UserRepository;
+import sit.int221.projectintegrate.Services.CustomUserDetailsService;
 import sit.int221.projectintegrate.Services.UserService;
+import sit.int221.projectintegrate.Util.JwtUtil;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -27,6 +35,24 @@ public class UserController {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    Argon2PasswordEncoder passwordEncoder;
+
+    @Autowired
+    CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    JwtUtil jwtUtil;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @Autowired
+    JwtUserRepository userRepository;
+
     public UserController() {
     }
 
@@ -35,16 +61,23 @@ public class UserController {
         return this.repository.findAll();
     }
 
+
+    @GetMapping("/info")
+    public User getUserDetails(){
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return repository.findByEmail(email).get();
+    }
+
     @GetMapping("/{userId}")
     public SimpleUserDTO getUserById(@PathVariable Integer userId) {
         return userService.getUserById(userId);
     }
 
-    @PostMapping({""})
-    @ResponseStatus(HttpStatus.CREATED)
-    public User create(@Valid @RequestBody SimpleUserDTO newUser) {
-        return this.userService.addUser(newUser);
-    }
+//    @PostMapping({""})
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public User create(@Valid @RequestBody SimpleUserDTO newUser) {
+//        return this.userService.addUser(newUser);
+//    }
 
     @PostMapping("/match")
     public void login(@Validated @RequestBody SimpleLoginDTO body) {
@@ -56,17 +89,44 @@ public class UserController {
         }
 
     }
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        User user = userRepository.findByEmail(loginRequest.getEmail());
+        if(user == null){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found Email!");
+        }
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getUserpassword()
+                )
+        );
 
-//    @PostMapping("/login")
-//    public String login(@Valid @RequestBody User email,User password) {
-//        if(userService.checkEmail(email)) {
-//                return "student Exists";
-//            }
-//        if (userService.checkPassword(password)){
-//            return "Incorrect Password";
-//             }
-//        return null;
-//    }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        final String jwt = jwtUtil.generateToken(userDetails);
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+        if(userRepository.findUsersByEmail(signUpRequest.getEmail()) != null) {
+            return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
+                    HttpStatus.BAD_REQUEST);
+        }
+        User addUserList = modelMapper.map(signUpRequest, User.class);
+        Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id,12,24);
+        String hash = argon2.hash(2,15*1024,1,addUserList.getUserpassword().toCharArray());
+        // Creating user's account
+        User jwtUser = new User();
+        jwtUser.setUsername(signUpRequest.getUsername());
+        jwtUser.setEmail(signUpRequest.getEmail());
+        jwtUser.setUserpassword(hash);
+//        jwtUser.setUserpassword(passwordEncoder.encode(signUpRequest.getUserpassword()));
+        jwtUser.setRoles(signUpRequest.getRoles());
+        userRepository.save(jwtUser);
+        return ResponseEntity.ok(new ApiResponse(true, "User registered successfully"));
+    }
 
     @DeleteMapping({"/{userId}"})
     public void delete(@PathVariable Integer userId) {

@@ -2,7 +2,12 @@ package sit.int221.projectintegrate.DTO;
 
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import sit.int221.projectintegrate.Entities.Roles;
 
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -24,7 +29,8 @@ public class SimpleUserDTO {
     @Length(max = 50,message = "Email up to 50 characters")
     private String email;
     @NotNull
-    private String roles;
+    @Enumerated(EnumType.STRING)
+    private Roles roles;
     @NotNull
     @NotEmpty
     @Size(min = 8, max = 14)

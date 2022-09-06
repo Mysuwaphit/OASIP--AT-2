@@ -6,6 +6,10 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -29,9 +33,10 @@ public class User {
     @Column(name = "userpassword", nullable = false, length = 90)
     private String userpassword;
 
-    @Lob
+    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "roles", nullable = false)
-    private String roles;
+    private Roles roles ;
 
     @Column(name = "createdOn", nullable = false , insertable = false , updatable = false)
     private LocalDateTime createdOn;
@@ -39,4 +44,4 @@ public class User {
     @Column(name = "updatedOn", nullable = false , insertable = false , updatable = false)
     private LocalDateTime updatedOn;
 
-}
+    }

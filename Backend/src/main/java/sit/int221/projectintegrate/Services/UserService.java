@@ -4,17 +4,17 @@ import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.projectintegrate.DTO.SimpleLoginDTO;
 import sit.int221.projectintegrate.DTO.SimpleUserDTO;
 import sit.int221.projectintegrate.Entities.User;
 import sit.int221.projectintegrate.Repository.UserRepository;
+
+import java.util.Optional;
+
 
 @Service
 public class UserService {
@@ -24,7 +24,6 @@ public class UserService {
     private ModelMapper modelMapper;
 
     private Argon2PasswordEncoder encoder = new Argon2PasswordEncoder();
-
 
     public SimpleUserDTO getUserById(Integer id) {
         User user = repository.findById(id)
@@ -44,7 +43,8 @@ public class UserService {
     }
 
     public boolean matcher(String email,String password) {
-        User user = repository.findByEmail(email);
+        Optional<User> userRes = repository.findByEmail(email);
+        User user = userRes.get();
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found Email!");
         } else {
@@ -55,6 +55,7 @@ public class UserService {
             }
         }
     }
+
 
 
 

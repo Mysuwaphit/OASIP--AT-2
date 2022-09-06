@@ -11,7 +11,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-@NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Getter
@@ -31,4 +30,12 @@ public class SimpleLoginDTO {
     @NotEmpty
     @Size(min = 8, max = 14)
     private String userpassword;
+
+    public SimpleLoginDTO ( String email, String password) {
+        this.email = email;
+        this.userpassword = password;
+    }
+
+    public SimpleLoginDTO () {
+    }
 }
