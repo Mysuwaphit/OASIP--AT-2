@@ -6,10 +6,17 @@ import ListUser from "../components/listUser.vue";
 const yourName = ref('')
 const yourEmail = ref('')
 
+const token = `Bearer ${localStorage.getItem('user')}`
 const filterUser = ref([])
 const userList = ref([])
 const getUserList = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
     const event = await res.json();
     userList.value = event
@@ -22,7 +29,13 @@ const getUserList = async () => {
 const filterEvent = ref([])
 const eventList = ref([])
 const getEventList = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
     const event = await res.json();
     eventList.value = event

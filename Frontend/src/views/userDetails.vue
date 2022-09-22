@@ -8,9 +8,16 @@ const {params} = useRoute()
 const goBack = () => appRouter.go(-1)
 const goToEdit = (e) => appRouter.push({ name: 'EditUser' , params: { userId: e }})
 
+const token = `Bearer ${localStorage.getItem('user')}`
 const userListDetails = ref([]) 
 const getUserList = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/${params.userId}`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/${params.userId}`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
     userListDetails.value = await res.json();
   } else {

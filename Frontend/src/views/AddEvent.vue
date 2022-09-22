@@ -13,11 +13,17 @@ const description = ref('')
 
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
-
+const token = `Bearer ${localStorage.getItem('user')}`
 const eventList = ref([])
 const eventListByCategory = ref([])
 const getEventList = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
     const event = await res.json();
     eventList.value = event
@@ -28,7 +34,13 @@ const getEventList = async () => {
 
 const categoryList = ref([])
 const getCategory = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/eventCategories`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/eventCategories`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
     categoryList.value = await res.json(); 
   } else {

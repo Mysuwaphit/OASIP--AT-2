@@ -9,10 +9,17 @@
   const yourPassword = ref('')
   let checkedUser = ref(false)
   let status = ref(0)
-  let token = ref('')
+  // let token = ref('')
   const userList = ref([])
   const getUserList = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`)
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`
+    ,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token 
+        }
+    })
     if (res.status === 200) {
       userList.value = await res.json(); 
     } else {
@@ -20,7 +27,7 @@
     }
   };
   onBeforeMount(async () => {
-    await getUserList();
+    if(localStorage.getItem('user'))await getUserList();
   });
   let validatedEmail = ref('')
   const validateEmail = () => {
@@ -36,6 +43,8 @@
         method: 'POST',
         headers: {
           'content-type': 'application/json'
+          // 'Authorization': 'Bearer '
+          // + this.token  
         },
         body: JSON.stringify(
           {
@@ -44,17 +53,27 @@
           }
         )
       })
-      
-      if (res.status === 201 && res.status !== 400) {
-        const add = await res.json()
-        userList.value.push(add)
-        token.value = await res.body.token
+      // .then(response => {
+      //   status.value = response.status
+      //   console.log(response.jwt) 
+      //   // && response.data.accessToken
+      //   // response.status === 201 && 
+      //   if (response.status !== 400) {
+      //     localStorage.setItem('user', response.jwt);
+      //     console.log("Found the token!!!!")
+      //     // return response.data;
+      //   }else console.log(`response but ${response.status}`)
+      // });
+      if(res.status === 200){
+        status.value = res.status
+        const response = res.json()
+        response.then(jsonRes => {
+         const token = jsonRes.jwt
+         localStorage.setItem('user', token);
+         console.log(token)
+         console.log(localStorage.getItem('user'))
+        })
       }
-      status.value = res.status
-      console.log(status.value);
-      console.log(res.headers);
-      console.log(res.body);
-      console.log(res.token);
     }else alert('Password cannot be null')
   }
   </script>

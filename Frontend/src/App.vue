@@ -7,6 +7,9 @@ const appRouter = useRouter()
 const goToAddEvent = () => appRouter.push({ name: 'addEvent' })
 const goToLogin = () => appRouter.push({ name: 'Login'})
 
+const logOut = () => localStorage.getItem('user')? localStorage.clear(): alert("You're not logging In")
+
+
 </script>
  
  <template>
@@ -18,6 +21,7 @@ const goToLogin = () => appRouter.push({ name: 'Login'})
         </div> 
 
         <button type="button" id="login" class="btn btn-primary trigger-btn" @click="goToLogin">Log In</button>
+        <button type="button" id="logout" class="btn btn-primary trigger-btn" @click="logOut">Log Out</button>
 
         <!-- Add event -->
         <!-- <button type="button" @click="goToAddEvent" class="addEvent" id="myBtn">+ Add Event</button> -->
@@ -80,7 +84,7 @@ body{
 }
 
 #login{
-  margin-left:1780px;
+  margin-left:1680px;
 }
 
 #login:active {
@@ -110,6 +114,41 @@ body{
   border: none;
 }
 
+#logout:hover{
+  transform: scale(1.08); 
+  transition: all .2s ease-in-out;
+}
+
+#logout{
+  margin-left:1770px;
+}
+
+#logout:active {
+  background-color: rgba(146, 44, 64, 1);
+  color:white;
+  outline: none;
+  border: none;
+}
+
+#logout:focus {
+  background-color: rgba(146, 44, 64, 1);
+  color:white;
+//   outline: none;
+//   border: none;
+}
+
+#logout{
+  background-color: white;  
+  color:black;
+  // rgba(146, 44, 64, 1)
+  border-radius: 40px;
+  padding: 10px 15px;
+  margin-right:15px;
+  margin-bottom:5px;
+  margin-top: 10px;
+  position: absolute;
+  border: none;
+}
 
 
 button{

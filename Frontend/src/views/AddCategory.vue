@@ -9,9 +9,17 @@ const description = ref('')
 
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
+const token = `Bearer ${localStorage.getItem('user')}`
 const categoryList = ref([])
 const getCategory = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/eventCategories`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/eventCategories`
+  ,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
     categoryList.value = await res.json(); 
   } else {

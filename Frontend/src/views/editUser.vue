@@ -9,10 +9,17 @@ const {params} = useRoute()
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
 
+const token = `Bearer ${localStorage.getItem('user')}`
 const userList = ref([])
 const userListDetails = ref([]) 
 const getUserList = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
     const user = await res.json();
     userList.value = user

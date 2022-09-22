@@ -9,10 +9,18 @@ console.log(`now : ${now}`);
 const yourDateTime = ref(now)
 const yourEmail = ref('')
 
+const token = `Bearer ${localStorage.getItem('user')}`
 const filterEvent = ref([])
 const eventList = ref([])
 const getEventList = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`
+  ,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
     const event = await res.json();
     eventList.value = event
@@ -24,7 +32,14 @@ const getEventList = async () => {
 
 const categoryList = ref([])
 const getCategory = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/eventCategories`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/eventCategories`
+  ,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token 
+        }
+  })
   if (res.status === 200) {
     categoryList.value = await res.json(); 
   } else {
@@ -32,8 +47,12 @@ const getCategory = async () => {
   }
 };
 onBeforeMount(async () => {
+  if(localStorage.getItem('user')){
+  console.log("you've localstorage")
+  console.log(token)
   await getEventList();
   await getCategory();
+  }
 });
 
 const text = ref('')
