@@ -32,7 +32,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity security) throws Exception {
-        security.csrf().disable()
+        security.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/authenticate", "/signin", "/signup","/api/users/login","/api/users/signup").permitAll()
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
