@@ -44,4 +44,4 @@ public class User {
     @Column(name = "updatedOn", nullable = false , insertable = false , updatable = false)
     private LocalDateTime updatedOn;
 
-    }
+}

@@ -9,7 +9,28 @@
   const yourPassword = ref('')
   let checkedUser = ref(false)
   let status = ref(0)
-  // let token = ref('')
+
+  const token = `Bearer ${localStorage.getItem('accessToken')}`
+  const postRefreshToken = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': token,
+          'isRefreshToken': true
+        }
+      })
+      if(res.status === 200){
+        // status.value = res.status
+        const response = res.json()
+        response.then(jsonRes => {
+         const reToken = jsonRes.jwt
+         localStorage.setItem('accessToken', reToken);
+         console.log(reToken)
+         console.log(localStorage.getItem('accessToken'))
+        })
+      }else alert("Something went wrong! Please log in again.")
+}
   const userList = ref([])
   const getUserList = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`
@@ -22,12 +43,15 @@
     })
     if (res.status === 200) {
       userList.value = await res.json(); 
+    } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
     } else {
       console.log("No Category");
     }
   };
   onBeforeMount(async () => {
-    if(localStorage.getItem('user'))await getUserList();
+    if(localStorage.getItem('accessToken'))await getUserList();
   });
   let validatedEmail = ref('')
   const validateEmail = () => {
@@ -69,9 +93,10 @@
         const response = res.json()
         response.then(jsonRes => {
          const token = jsonRes.jwt
-         localStorage.setItem('user', token);
+         const refreshToken = jsonRes.refreshToken
+         localStorage.setItem('accessToken', token);
          console.log(token)
-         console.log(localStorage.getItem('user'))
+         console.log(localStorage.getItem('accessToken'))
         })
       }
     }else alert('Password cannot be null')

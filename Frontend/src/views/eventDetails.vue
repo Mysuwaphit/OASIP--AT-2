@@ -8,8 +8,29 @@ const {params} = useRoute()
 const goBack = () => appRouter.go(-1)
 const goToEdit = (e) => appRouter.push({ name: 'EditEvent' , params: { eventId: e }})
 
-const token = `Bearer ${localStorage.getItem('user')}`
+
 const eventListDetails = ref([]) 
+const token = `Bearer ${localStorage.getItem('accessToken')}`
+const postRefreshToken = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': token,
+          'isRefreshToken': true
+        }
+      })
+      if(res.status === 200){
+        // status.value = res.status
+        const response = res.json()
+        response.then(jsonRes => {
+         const reToken = jsonRes.jwt
+         localStorage.setItem('accessToken', reToken);
+         console.log(reToken)
+         console.log(localStorage.getItem('accessToken'))
+        })
+      }else alert("Something went wrong! Please log in again.")
+}
 const getEventList = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events/${params.eventId}`,{
         method: 'GET',
@@ -20,7 +41,11 @@ const getEventList = async () => {
   })
   if (res.status === 200) {
     eventListDetails.value = await res.json();
-  } else {
+  }else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+  } 
+  else {
     console.log("No Scheduled Events");
   }
 };

@@ -9,8 +9,28 @@ const description = ref('')
 
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
-const token = `Bearer ${localStorage.getItem('user')}`
+const token = `Bearer ${localStorage.getItem('accessToken')}`
 const categoryList = ref([])
+const postRefreshToken = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': token,
+          'isRefreshToken': true
+        }
+      })
+      if(res.status === 200){
+        // status.value = res.status
+        const response = res.json()
+        response.then(jsonRes => {
+         const reToken = jsonRes.jwt
+         localStorage.setItem('accessToken', reToken);
+         console.log(reToken)
+         console.log(localStorage.getItem('accessToken'))
+        })
+      }else alert("Something went wrong! Please log in again.")
+}
 const getCategory = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/eventCategories`
   ,{
@@ -22,7 +42,11 @@ const getCategory = async () => {
   })
   if (res.status === 200) {
     categoryList.value = await res.json(); 
-  } else {
+  }else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+  }
+   else {
     console.log("No Category");
   }
 };
@@ -51,6 +75,9 @@ const addCategory = async (validatedName,duration,description) => {
     const add = await res.json()
     categoryList.value.push(add)
     console.log('added successfully')
+  } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
   } else console.log('error, cannot be added')
 }
 

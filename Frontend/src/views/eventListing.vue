@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, onBeforeUpdate, onServerPrefetch} from "vue";
 import ListEvent from '../components/listEvent.vue'
 import ListCategory from '../components/listCategory.vue'
 import AlertBox from '../components/alertBox.vue'
@@ -9,9 +9,29 @@ console.log(`now : ${now}`);
 const yourDateTime = ref(now)
 const yourEmail = ref('')
 
-const token = `Bearer ${localStorage.getItem('user')}`
+const token = `Bearer ${localStorage.getItem('accessToken')}`
 const filterEvent = ref([])
 const eventList = ref([])
+const postRefreshToken = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': token,
+          'isRefreshToken': true
+        }
+      })
+      if(res.status === 200){
+        // status.value = res.status
+        const response = res.json()
+        response.then(jsonRes => {
+         const reToken = jsonRes.jwt
+         localStorage.setItem('accessToken', reToken);
+         console.log(reToken)
+         console.log(localStorage.getItem('accessToken'))
+        })
+      }else alert("Something went wrong! Please log in again.")
+}
 const getEventList = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`
   ,{
@@ -25,11 +45,13 @@ const getEventList = async () => {
     const event = await res.json();
     eventList.value = event
     filterEvent.value = event
+  } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
   } else {
     console.log("No Scheduled Events");
   }
 };
-
 const categoryList = ref([])
 const getCategory = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/eventCategories`
@@ -42,12 +64,24 @@ const getCategory = async () => {
   })
   if (res.status === 200) {
     categoryList.value = await res.json(); 
+  } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
   } else {
     console.log("No Category");
   }
 };
-onBeforeMount(async () => {
-  if(localStorage.getItem('user')){
+// onBeforeMount(async () => {
+//   if(localStorage.getItem('accessToken')){
+//   console.log("you've localstorage")
+//   console.log(token)
+//   await getEventList();
+//   await getCategory();
+//   }
+// });
+
+onServerPrefetch(async () => {
+  if(localStorage.getItem('accessToken')){
   console.log("you've localstorage")
   console.log(token)
   await getEventList();

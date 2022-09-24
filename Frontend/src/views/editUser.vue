@@ -9,9 +9,30 @@ const {params} = useRoute()
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
 
-const token = `Bearer ${localStorage.getItem('user')}`
+const token = `Bearer ${localStorage.getItem('accessToken')}`
 const userList = ref([])
 const userListDetails = ref([]) 
+
+const postRefreshToken = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': token,
+          'isRefreshToken': true
+        }
+      })
+      if(res.status === 200){
+        // status.value = res.status
+        const response = res.json()
+        response.then(jsonRes => {
+         const reToken = jsonRes.jwt
+         localStorage.setItem('accessToken', reToken);
+         console.log(reToken)
+         console.log(localStorage.getItem('accessToken'))
+        })
+      }else alert("Something went wrong! Please log in again.")
+}
 const getUserList = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
         method: 'GET',
@@ -24,7 +45,11 @@ const getUserList = async () => {
     const user = await res.json();
     userList.value = user
     userListDetails.value = userList.value.filter((e) =>  e.id.toString() === params.userId)
-  } else {
+  } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+  }  
+  else {
     console.log("No have any users.");
   }
 };
@@ -63,6 +88,9 @@ const updateUser = async (editUserId,validatedName,validatedEmail,selectedRole) 
       clearForm();
       console.log('added successfully')
       success.value = true
+    } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
     } else {
       console.log('error, cannot be added')
     }

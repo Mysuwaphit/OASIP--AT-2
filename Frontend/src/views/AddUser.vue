@@ -13,8 +13,29 @@ const secondPassword = ref('')
 
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
-const token = `Bearer ${localStorage.getItem('user')}`
+const token = `Bearer ${localStorage.getItem('accessToken')}`
 const userList = ref([])
+
+const postRefreshToken = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': token,
+          'isRefreshToken': true
+        }
+      })
+      if(res.status === 200){
+        // status.value = res.status
+        const response = res.json()
+        response.then(jsonRes => {
+         const reToken = jsonRes.jwt
+         localStorage.setItem('accessToken', reToken);
+         console.log(reToken)
+         console.log(localStorage.getItem('accessToken'))
+        })
+      }else alert("Something went wrong! Please log in again.")
+}
 const getUserList = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
         method: 'GET',
@@ -25,7 +46,11 @@ const getUserList = async () => {
   })
   if (res.status === 200) {
     userList.value = await res.json(); 
-  } else {
+  } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+  }  
+  else {
     console.log("No Category");
   }
 };
@@ -81,6 +106,9 @@ const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) 
       const add = await res.json()
       userList.value.push(add)
       console.log('added successfully')
+    }else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
     } else console.log('error, cannot be added')
   } else alert("Your password doesn't match.")
 }
