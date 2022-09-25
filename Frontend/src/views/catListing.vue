@@ -4,7 +4,7 @@ import ListCategory from '../components/listCategory.vue'
 
 const token = `Bearer ${localStorage.getItem('accessToken')}`
 const eventList = ref([])
-
+let status = ref(0)
 const postRefreshToken = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
         method: 'GET',
@@ -62,6 +62,10 @@ const getCategory = async () => {
     console.log("No Category");
   }
 };
+if(status.value === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+  }
 onBeforeMount(async () => {
   await getCategory();
   await getEventList();

@@ -21,7 +21,7 @@
         }
       })
       if(res.status === 200){
-        // status.value = res.status
+        status.value = res.status
         const response = res.json()
         response.then(jsonRes => {
          const reToken = jsonRes.jwt
@@ -50,9 +50,16 @@
       console.log("No Category");
     }
   };
+  if(status.value === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+  }
   onBeforeMount(async () => {
     if(localStorage.getItem('accessToken'))await getUserList();
   });
+
+
+
   let validatedEmail = ref('')
   const validateEmail = () => {
     const  validEmail = /^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;

@@ -9,6 +9,7 @@ console.log(`now : ${now}`);
 const yourDateTime = ref(now)
 const yourEmail = ref('')
 
+let status = ref(0)
 const token = `Bearer ${localStorage.getItem('accessToken')}`
 const filterEvent = ref([])
 const eventList = ref([])
@@ -22,7 +23,7 @@ const postRefreshToken = async () => {
         }
       })
       if(res.status === 200){
-        // status.value = res.status
+        status.value = res.status
         const response = res.json()
         response.then(jsonRes => {
          const reToken = jsonRes.jwt
@@ -71,16 +72,7 @@ const getCategory = async () => {
     console.log("No Category");
   }
 };
-// onBeforeMount(async () => {
-//   if(localStorage.getItem('accessToken')){
-//   console.log("you've localstorage")
-//   console.log(token)
-//   await getEventList();
-//   await getCategory();
-//   }
-// });
-
-onServerPrefetch(async () => {
+onBeforeMount(async () => {
   if(localStorage.getItem('accessToken')){
   console.log("you've localstorage")
   console.log(token)
@@ -88,6 +80,18 @@ onServerPrefetch(async () => {
   await getCategory();
   }
 });
+if(status.value === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+}
+// onServerPrefetch(async () => {
+//   if(localStorage.getItem('accessToken')){
+//   console.log("you've localstorage")
+//   console.log(token)
+//   await getEventList();
+//   await getCategory();
+//   }
+// });
 
 const text = ref('')
 

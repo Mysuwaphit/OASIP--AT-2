@@ -7,7 +7,7 @@ const appRouter = useRouter()
 const goToAddEvent = () => appRouter.push({ name: 'addEvent' })
 const goToLogin = () => appRouter.push({ name: 'Login'})
 
-const logOut = () => localStorage.getItem('accessToken')? localStorage.clear(): alert("You're not logging In")
+const logOut = () => localStorage.getItem('accessToken')? (localStorage.clear()) && alert("Logging out successfully"): alert("You're not logging In")
 
 
 </script>

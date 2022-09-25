@@ -8,7 +8,7 @@ const {params} = useRoute()
 const goBack = () => appRouter.go(-1)
 const goToEdit = (e) => appRouter.push({ name: 'EditEvent' , params: { eventId: e }})
 
-
+let status = ref(0)
 const eventListDetails = ref([]) 
 const token = `Bearer ${localStorage.getItem('accessToken')}`
 const postRefreshToken = async () => {
@@ -21,7 +21,7 @@ const postRefreshToken = async () => {
         }
       })
       if(res.status === 200){
-        // status.value = res.status
+        status.value = res.status
         const response = res.json()
         response.then(jsonRes => {
          const reToken = jsonRes.jwt
@@ -49,7 +49,10 @@ const getEventList = async () => {
     console.log("No Scheduled Events");
   }
 };
-
+if(status.value === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+  }
 onBeforeMount(async () => {
   await getEventList();
 });

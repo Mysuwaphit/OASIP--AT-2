@@ -13,6 +13,7 @@ const {params} = useRoute()
 const appRouter = useRouter()
 const goBack = () => appRouter.go(-1)
 
+let status = ref(0)
 const token = `Bearer ${localStorage.getItem('accessToken')}`
 const categoryListDetails = ref([])
 const categoryList = ref([])
@@ -27,7 +28,7 @@ const postRefreshToken = async () => {
         }
       })
       if(res.status === 200){
-        // status.value = res.status
+        status.value = res.status
         const response = res.json()
         response.then(jsonRes => {
          const reToken = jsonRes.jwt
@@ -57,7 +58,10 @@ const getCategory = async () => {
     console.log("No Category");
   }
 };
-
+if(status.value === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+  }
 onBeforeMount(async () => {
   await getCategory();
   matchCat();
