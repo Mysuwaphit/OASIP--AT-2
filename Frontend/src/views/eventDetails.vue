@@ -12,7 +12,7 @@ let status = ref(0)
 const eventListDetails = ref([]) 
 const token = `Bearer ${localStorage.getItem('accessToken')}`
 const postRefreshToken = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/refresh`,{
         method: 'GET',
         headers: {
           'content-type': 'application/json',

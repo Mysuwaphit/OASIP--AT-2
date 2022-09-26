@@ -20,7 +20,7 @@ const eventList = ref([])
 const eventListByCategory = ref([])
 
 const postRefreshToken = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/refresh`,{
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/refresh`,{
         method: 'GET',
         headers: {
           'content-type': 'application/json',
@@ -36,6 +36,7 @@ const postRefreshToken = async () => {
          localStorage.setItem('accessToken', reToken);
          console.log(reToken)
          console.log(localStorage.getItem('accessToken'))
+         window.location.reload();
         })
       }else alert("Something went wrong! Please log in again.")
 }
