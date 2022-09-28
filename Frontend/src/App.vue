@@ -9,7 +9,6 @@ const goToLogin = () => appRouter.push({ name: 'Login'})
 
 const logOut = () => localStorage.getItem('accessToken')? (localStorage.clear()) && alert("Logging out successfully"): alert("You're not logging In")
 const IsLoggingIn = () => localStorage.getItem('accessToken')? console.log(`You're already log In`) : alert("Please log in first.")
-
 </script>
  
  <template>
