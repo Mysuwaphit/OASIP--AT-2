@@ -29,7 +29,6 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
         super.configure(auth);
         auth.userDetailsService(customUserDetailsService);
     }
-
     @Override
     public void configure(HttpSecurity security) throws Exception {
         security.cors().and().csrf().disable()
