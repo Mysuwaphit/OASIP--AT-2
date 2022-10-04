@@ -28,6 +28,7 @@ const postRefreshToken = async () => {
          localStorage.setItem('accessToken', reToken);
          console.log(reToken)
          console.log(localStorage.getItem('accessToken'))
+         window.location.reload();
         })
       }else alert("Something went wrong! Please log in again.")
 }
