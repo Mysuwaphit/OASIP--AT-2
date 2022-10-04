@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.projectintegrate.DTO.SimpleLoginDTO;
 import sit.int221.projectintegrate.DTO.SimpleUserDTO;
+import sit.int221.projectintegrate.Entities.Roles;
 import sit.int221.projectintegrate.Entities.User;
+import sit.int221.projectintegrate.Exception.ValidationHandler;
 import sit.int221.projectintegrate.Repository.UserRepository;
 
 import java.util.Optional;
@@ -54,6 +56,15 @@ public class UserService {
                 return false;
             }
         }
+    }
+    public boolean checkRole(String newRole) {
+        for (Roles role : Roles.values()){
+//            System.out.println(role.toString());
+            if(role.toString().equals(newRole) || newRole==null || newRole=="") {
+                return true;
+            }
+        }
+        return false;
     }
 
 

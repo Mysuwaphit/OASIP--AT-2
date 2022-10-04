@@ -34,9 +34,9 @@ public class User {
     private String userpassword;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column(name = "roles", nullable = false)
-    private Roles roles ;
+    private String roles ;
 
     @Column(name = "createdOn", nullable = false , insertable = false , updatable = false)
     private LocalDateTime createdOn;

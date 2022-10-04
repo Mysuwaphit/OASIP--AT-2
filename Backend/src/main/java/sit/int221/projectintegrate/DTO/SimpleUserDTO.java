@@ -29,8 +29,8 @@ public class SimpleUserDTO {
     @Length(max = 50,message = "Email up to 50 characters")
     private String email;
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private Roles roles;
+//    @Enumerated(EnumType.STRING)
+    private String roles;
     @NotNull
     @NotEmpty
     @Size(min = 8, max = 14)

@@ -26,8 +26,8 @@ public class SignUpRequest {
     @Size(min = 6, max = 20)
     private String userpassword;
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private Roles roles;
+//    @Enumerated(EnumType.STRING)
+    private String roles;
 
     public String getEmail() {
         return email;
@@ -44,4 +44,6 @@ public class SignUpRequest {
     public void setUserpassword(String userpassword) {
         this.userpassword = userpassword;
     }
+
+
 }
