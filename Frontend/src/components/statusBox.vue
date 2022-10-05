@@ -12,6 +12,7 @@ defineProps({
 const appRouter = useRouter()
 const goToHome = () => appRouter.push({ name: 'EventListing' })
 const reload = () => window.location.reload();
+const isLecturer = () => localStorage.getItem('role') === 'lecturer'? appRouter.push({ name: 'CatListing' }):appRouter.push({ name: 'EventListing' })
 </script>
  
 <template>
@@ -23,7 +24,7 @@ const reload = () => window.location.reload();
 		<div class="shadow"></div>
 		<h1 class="title">Success</h1>
 		<p class="message">Wohoo! Login successfully.</p>
-		<button type="button" class="btn btn-success" data-dismiss="modal" @click="goToHome">Continue</button>
+		<button type="button" class="btn btn-success" data-dismiss="modal" @click="isLecturer">Continue</button>
 	</div>
 
 	<div class="error" v-if="status === 401" >

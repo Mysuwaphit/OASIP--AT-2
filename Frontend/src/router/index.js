@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Meta from 'vue-meta'
 import AddEvent from '../views/AddEvent.vue';
 import EventListing from '../views/eventListing.vue';
 import EventDetail from '../views/eventDetails.vue'
@@ -20,70 +21,139 @@ const routes = [
     {
       path: '/addEvent',
       name: 'addEvent',
-      component: AddEvent
+      component: AddEvent,
+      meta: {
+        requireAuth : false,
+        role: ['admin','student']
+      }
     },
     {
       path: '/',
       name: 'EventListing',
-      component: EventListing
+      component: EventListing,
+      meta: {
+        requireAuth : false,
+        role: ['admin','lecturer','student']
+      }
     },
     {
       path: '/eventDetail/:eventId',
       name: 'EventDetail',
-      component: EventDetail
+      component: EventDetail,
+      meta: {
+        requireAuth : true,
+        role: ['admin','lecturer','student']
+      }
     },
     {
       path:'/editCategory/:catId',
       name: 'EditCategory',
-      component: EditCategory
+      component: EditCategory,
+      meta: {
+        requireAuth : true,
+        role: ['admin','lecturer']
+      }
     },
     {
       path:'/allCategory',
       name: 'CatListing',
-      component: CatListing
+      component: CatListing,
+      meta: {
+        requireAuth : true,
+        role: ['admin','lecturer','student']
+      }
     },
     {
       path:'/addCategory',
       name: 'AddCategory',
-      component: AddCategory
+      component: AddCategory,
+      meta: {
+        requireAuth : true,
+        role: ['admin','lecturer']
+      }
     },
     {
       path: '/catDetail/:catId',
       name: 'CatDetail',
-      component: CatDetail
+      component: CatDetail,
+      meta: {
+        requireAuth : true,
+        role: ['admin','lecturer','student']
+      }
     },
     {
       path: '/editEvent/:eventId',
       name: 'EditEvent',
-      component: EditEvent
+      component: EditEvent,
+      meta: {
+        requireAuth : true,
+        role: ['admin','student']
+      }
     },
     {
       path: '/allUser',
       name: 'allUser',
-      component: UserListing
+      component: UserListing,
+      meta: {
+        requireAuth : true,
+        role: ['admin']
+      }
     },
     {
       path: '/userDetail/:userId',
       name: 'UserDetail',
-      component: UserDetail
+      component: UserDetail,
+      meta: {
+        requireAuth : true,
+        role: ['admin']
+      }
     },
     {
       path: '/editUser/:userId',
       name: 'EditUser',
-      component: EditUser
+      component: EditUser,
+      meta: {
+        requireAuth : true,
+        role: ['admin']
+      }
     },
     {
       path: '/addUser',
       name: 'AddUser',
-      component: AddUser
+      component: AddUser,
+      meta: {
+        requireAuth : false
+      }
     },
     {
       path: '/login',
       name: 'Login',
-      component: Login
+      component: Login,
+      meta: {
+        requireAuth : false
+      }
     }
 
 ]
-  
-  const router = createRouter({ history, routes })
+
+const router = createRouter({ history, routes }) 
+router.beforeEach((to,from,next) => {
+  const requireAuth = to.matched.some((record) => record.meta.requireAuth)
+  const role = to.matched.filter((record) => record.meta.role)
+  console.log(`Auth-Role: ${role}`)
+  if(requireAuth){
+    if(localStorage.getItem('accessToken')){
+      if(role.filter((e) => e === localStorage.getItem('role'))){
+        // console.log(role.matched.some((e) => e == localStorage.getItem('role')))
+        next()
+      }
+    }
+    else
+    next({name : 'Login'})
+  }
+  else 
+    next()
+})
+
+
   export default router

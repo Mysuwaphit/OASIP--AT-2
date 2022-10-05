@@ -80,14 +80,14 @@ const getEndTime = ref((e) =>{
    console.log(`new Time => ${endTime.value}`);
    return new Date(endTime.value.getTime() + e.duration * 60000).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})
 })
-
+const role = localStorage.getItem('role')
 </script>
  
 <template>
     <div class="app"> 
       <h1 id="bookingname">{{ eventListDetails.bookingName }}</h1>
         <div class="box">
-            <div @click="goToEdit($route.params.eventId)">
+            <div @click="goToEdit($route.params.eventId)" v-show="role === 'admin' || role === 'student'">
               <img id='editimg' src='../assets/icons8-edit-64.png'>
             </div>
           <div id="detail" >
@@ -101,7 +101,7 @@ const getEndTime = ref((e) =>{
                 <p >Description :</p> 
                 <p id="description" >{{  eventListDetails.eventNotes }}</p>
           </div>
-              <button type="button" id="delete" class="material-symbols-outlined trigger-btn" href="#myModal" data-toggle="modal">delete</button>
+              <button type="button" id="delete" class="material-symbols-outlined trigger-btn" href="#myModal" data-toggle="modal" v-show="role === 'admin' || role === 'student'">delete</button>
               <button type="button" class="material-symbols-outlined" @click="goBack" id="backhome">arrow_back</button>
         </div>
         

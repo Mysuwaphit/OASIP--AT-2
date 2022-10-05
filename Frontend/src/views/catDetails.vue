@@ -93,7 +93,7 @@ const matchEvent = () => eventListDetails.value = eventListDetails.value.filter(
 
     <div class="app" > 
         <div class="box" v-for="(categoryListDetail,index) in categoryListDetails" :key="index">
-          <div @click="goToEdit">
+          <div @click="goToEdit" v-show="role === 'admin' || role === 'lecturer'">
                 <img id='editimg' src='../assets/icons8-edit-64.png'>
           </div>
           <h1 id="bookingname">{{  categoryListDetail.eventCategoryName }}</h1>

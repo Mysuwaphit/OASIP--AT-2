@@ -71,12 +71,10 @@
     if(yourInputEmail != '' && yourInputPassword != ''){
       checkedUser.value = true
       console.log(checkedUser.value);
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/login`,{
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/login`,{
         method: 'POST',
         headers: {
           'content-type': 'application/json'
-          // 'Authorization': 'Bearer '
-          // + this.token  
         },
         body: JSON.stringify(
           {
@@ -101,10 +99,16 @@
         const response = res.json()
         response.then(jsonRes => {
          const token = jsonRes.jwt
-         const refreshToken = jsonRes.refreshToken
+         const role = jsonRes.roles
+         const userEmail = jsonRes.email
+        //  const refreshToken = jsonRes.refreshToken
          localStorage.setItem('accessToken', token);
-         console.log(token)
+         localStorage.setItem('role',role)
+         localStorage.setItem('email',userEmail)
+
+         console.log(localStorage.getItem('email'))
          console.log(localStorage.getItem('accessToken'))
+         console.log(localStorage.getItem('role'))
         })
       }
     }else alert('Password cannot be null')

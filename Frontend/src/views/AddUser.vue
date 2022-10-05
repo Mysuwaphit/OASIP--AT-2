@@ -97,7 +97,8 @@ const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) 
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/signup`,{
       method: 'POST',
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        'Authorization': token
       },
       body: JSON.stringify(
         {

@@ -64,7 +64,7 @@ const getEventList = async () => {
   if (res.status === 200) {
     const event = await res.json();
     eventList.value = event
-    filterEvent.value = events
+    filterEvent.value = event
   } else if(res.status === 401){
     console.log("Access token expired!!!!")
     postRefreshToken();

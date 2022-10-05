@@ -51,6 +51,7 @@ const getCategory = async () => {
     const List = await res.json(); 
     categoryList.value = List
     categoryListDetails.value= List
+    matchCat();
   }else if(res.status === 401){
     console.log("Access token expired!!!!")
     postRefreshToken();
@@ -63,13 +64,15 @@ if(status.value === 401){
     console.log("Access token expired!!!!")
     postRefreshToken();
   }
+
 onBeforeMount(async () => {
   await getCategory();
   matchCat();
+  console.log(categoryListDetails.value)
 });
 
   // Match Event with param on URL
-const matchCat = () => categoryListDetails.value = categoryListDetails.value.filter((cat) => cat.id === +(params.catId))
+const matchCat = () => categoryListDetails.value = categoryList.value.filter((cat) => cat.id === +(params.catId))
 
 const updateEvent = async (categoryListDetailId,duration,description) => {
   console.log('success')
@@ -109,7 +112,6 @@ const clearForm = () => {
   description.value = noteValue.value
   return console.log('clear');
 }
-
 </script>
  
 <template>
@@ -121,15 +123,15 @@ const clearForm = () => {
                 <form @vnode-before-mount="durationValue=categoryListDetail.duration">
                  <div class="form-group">
                     <label class="col-form-label">Duration (1-480 Minutes) :</label>
-                    <input type="number" class="form-control" id="recipient-email" min="1" max="480" v-model="duration" @focusout="validDuration" required>
+                    <input type="number" class="form-control" id="recipient-email" min="1" max="480" v-model="duration" @focusout="validDuration" :placeholder="categoryListDetail.duration" required>
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
                     <label for="message-text" class="col-form-label">Description :</label> {{description.length}}/500
                     <textarea class="form-control" id="message-text"  type="text" v-model="description" 
-                    @vnode-before-mount="noteValue = categoryListDetail.eventCategoryDescription" @focusout="validateDescription">
-                    {{categoryListDetail.eventCategoryDescription}}</textarea> 
+                    @vnode-before-mount="noteValue = categoryListDetail.eventCategoryDescription" :placeholder='categoryListDetail.eventCategoryDescription' @focusout="validateDescription">
+                    </textarea> 
                 </div>
                 </form>
               </div>

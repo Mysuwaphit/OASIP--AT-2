@@ -5,10 +5,11 @@ import SuccessBox from '../components/successBox.vue'
 
 const now = new Date().toISOString().substring(0,16)
 const selectCategory = ref([])
-const bookingEmail = ref('')
+const bookingEmail = ref(localStorage.getItem('email'))
 const bookingName = ref(null)
 const yourDateTime = ref(now)
 const description = ref('')
+const role = localStorage.getItem('role')
 // let success = ref(false)
 
 const appRouter = useRouter()
@@ -92,7 +93,8 @@ const addEvent = async (validatedName,validatedEmail,selectCategory,yourISODateT
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`,{
     method: 'POST',
     headers: {
-      'content-type': 'application/json'
+      'content-type': 'application/json',
+      'Authorization': token
     },
     body: JSON.stringify(
       {
@@ -206,7 +208,8 @@ const clearForm = () => {
             </div>
             <div class="form-group">
                 <label class="col-form-label">Email :</label>
-                <input type="email" class="form-control" placeholder="js@gmail.com" id="recipient-email" maxlength="200" v-model="bookingEmail" @focusout="validateEmail(bookingEmail)" required> 
+                <input v-if="role === 'admin' || role === 'guest'" type="email" class="form-control" placeholder="js@gmail.com" id="recipient-email" maxlength="200" v-model="bookingEmail" @focusout="validateEmail(bookingEmail)" required> 
+                <p type="email" class="form-control" id="recipient-email" v-if="role === 'student'">{{ bookingEmail }}</p>
             </div>
 
             <!-- Choose Category -->

@@ -17,12 +17,46 @@ defineProps({
   }
 
 }) 
-
+let status = ref(0)
+const token = `Bearer ${localStorage.getItem('accessToken')}`
+const filterEvent = ref([])
+const postRefreshToken = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/refresh`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'Authorization': token,
+          'isRefreshToken': true
+        }
+      })
+      if(res.status === 200){
+        status.value = res.status
+        const response = res.json()
+        response.then(jsonRes => {
+         const reToken = jsonRes.jwt
+         localStorage.setItem('accessToken', reToken);
+         console.log(reToken)
+         console.log(localStorage.getItem('accessToken'))
+         window.location.reload();
+        })
+      }else alert("Something went wrong! Please log in again.")
+}
 const eventList = ref([])
 const getEventList = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events`
+  ,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
-    eventList.value = await res.json();
+    const event = await res.json();
+    eventList.value = event
+  } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
   } else {
     console.log("No Scheduled Events");
   }
@@ -41,11 +75,21 @@ const getEventList = async () => {
 
 const userList = ref([])
 const getUserList = async () => {
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`)
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users`,{
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'authorization': token
+        }
+  })
   if (res.status === 200) {
-    userList.value = await res.json();
+    const event = await res.json();
+    userList.value = event
+  } else if(res.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
   } else {
-    console.log("No User");
+    console.log("No Scheduled Events");
   }
 };
 
@@ -54,6 +98,10 @@ onBeforeMount(async () => {
 //   await getCategory();
   await getUserList();
 });
+if(status.value === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();
+}
 
 const appRouter = useRouter()
 const goToHome = () => appRouter.push({ name: 'EventListing' })

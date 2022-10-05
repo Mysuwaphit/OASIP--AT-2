@@ -88,7 +88,7 @@ const getTime = ref((e) =>{
                 <p>Created On : </p> <p id="startDate" >{{ getDate(userListDetails.createdOn) }} {{ getTime(userListDetails.createdOn) }}</p>
                 <p>Updated On  : </p> <p id="startTime" >{{ getDate(userListDetails.updatedOn) }} {{getTime(userListDetails.updatedOn) }}</p>
           </div>
-              <button type="button" id="delete" class="material-symbols-outlined trigger-btn" href="#myModal" data-toggle="modal">delete</button>
+              <button type="button" id="delete" class="material-symbols-outlined trigger-btn" href="#myModal" data-toggle="modal" >delete</button>
               <button type="button" class="material-symbols-outlined" @click="goBack" id="backhome">arrow_back</button>
         </div>
         

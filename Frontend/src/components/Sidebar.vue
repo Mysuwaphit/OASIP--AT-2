@@ -8,6 +8,7 @@ const toggle = ref(false);
 const ToggleMenu = () => {
   toggle.value = !toggle.value;
 };
+const role = localStorage.getItem('role')? localStorage.getItem('role') : 'guest'
 </script>
 
 <template>
@@ -26,27 +27,27 @@ const ToggleMenu = () => {
 
     <h3>Menu</h3>
     <div class="menu">
-      <router-link class="button" to="/">
+      <router-link class="button" to="/" v-if="role === 'admin' || role === 'student'">
         <span class="material-symbols-outlined"> event_available </span>
         <span class="text">All Event</span>
       </router-link>
 
-      <router-link class="button" to="/allCategory">
+      <router-link class="button" to="/allCategory" v-if="role === 'admin' || role === 'lecturer'">
         <span class="material-symbols-outlined"> category </span>
         <span class="text">All Category</span>
       </router-link>
 
-      <router-link class="button" to="allUser">
+      <router-link class="button" to="allUser" v-if="role === 'admin'">
         <span class="material-symbols-outlined">groups</span>
         <span class="text">All Users</span>
       </router-link>
 
-      <router-link class="button" to="addevent">
+      <router-link class="button" to="addevent" v-if="role === 'admin' || role === 'student' || role === 'guest'">
         <span class="material-symbols-outlined"> calendar_add_on </span>
         <span class="text">Add Event</span>
       </router-link>
 
-      <router-link class="button" to="addcategory">
+      <router-link class="button" to="addcategory" v-if="role === 'admin' || role === 'lecturer'">
         <span class="material-symbols-outlined"> add </span>
         <span class="text">Add Category</span>
       </router-link>

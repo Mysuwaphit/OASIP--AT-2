@@ -6,9 +6,18 @@ import Login from '../src/views/login.vue';
 const appRouter = useRouter()
 const goToAddEvent = () => appRouter.push({ name: 'addEvent' })
 const goToLogin = () => appRouter.push({ name: 'Login'})
+const goToHome = () => appRouter.push({ name: 'EventListing'})
 
-const logOut = () => localStorage.getItem('accessToken')? (localStorage.clear()) && alert("Logging out successfully"): alert("You're not logging In")
-const IsLoggingIn = () => localStorage.getItem('accessToken')? console.log(`You're already log In`) : alert("Please log in first.")
+const logOut = () => {
+  if(localStorage.getItem('accessToken')){
+    localStorage.clear()
+    goToHome()
+    window.location.reload()
+  }else
+    alert("You're not logging In")
+}
+console.log(localStorage.getItem('role'))
+// const IsLoggingIn = () => localStorage.getItem('accessToken')? console.log(`You're already log In`) : alert("Please log in first.")
 </script>
  
  <template>
@@ -16,7 +25,9 @@ const IsLoggingIn = () => localStorage.getItem('accessToken')? console.log(`You'
 
         <!-- navBar -->
         <div class="navBar">
-            <SideBar @click="IsLoggingIn"/>
+          <!-- @click="IsLoggingIn" -->
+          <!-- @="localStorage.getItem('role')" -->
+            <SideBar />
         </div> 
 
         <button type="button" id="login" class="btn btn-primary trigger-btn" @click="goToLogin">Log In</button>
