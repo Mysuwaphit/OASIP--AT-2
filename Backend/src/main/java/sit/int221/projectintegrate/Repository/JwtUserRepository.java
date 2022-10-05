@@ -8,9 +8,6 @@ import java.util.List;
 
 public interface JwtUserRepository extends JpaRepository<User,Integer> {
     User findUsersByEmail(String email);
-
     List<User> findAll();
-
     User findByEmail(String email);
-
 }

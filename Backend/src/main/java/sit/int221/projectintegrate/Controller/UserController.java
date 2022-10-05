@@ -71,11 +71,11 @@ public class UserController {
     }
 
 
-    @GetMapping("/info")
-    public User getUserDetails(){
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return repository.findByEmail(email).get();
-    }
+//    @GetMapping("/info")
+//    public User getUserDetails(){
+//        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        return repository.findByEmail(email).get();
+//    }
 
     @GetMapping("/{userId}")
     public SimpleUserDTO getUserById(@PathVariable Integer userId) {

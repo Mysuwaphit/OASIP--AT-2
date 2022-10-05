@@ -7,6 +7,8 @@ import sit.int221.projectintegrate.DTO.SimpleEventDTO;
 import sit.int221.projectintegrate.Entities.Events;
 import sit.int221.projectintegrate.Repository.EventRepository;
 import sit.int221.projectintegrate.Services.EventsService;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -36,49 +38,36 @@ public class EventController {
         this.repository = repository;
     }
 
-//    @GetMapping({""})
-//    public List<SimpleEventDTO> getAllEvent() {
-//        return this.eventsService.getAllEvent();
+//    @GetMapping("")
+//    public List<SimpleEventDTO> getAllEvent(@Valid HttpServletRequest request) {
+//        return eventsService.getAllEvent(request);
 //    }
 
-    @GetMapping({""})
-    public List<Events> getEventAll() {
-        return this.repository.findAll();
+    @GetMapping("")
+    public List<SimpleEventDTO> getAllEvent(@Valid HttpServletRequest request) {
+        return eventsService.getAllEvent(request);
     }
 
     @GetMapping({"/{eventId}"})
-    public SimpleEventDTO getEventById(@PathVariable Integer eventId) {
-        return eventsService.getSimpleEventById(eventId);
+    public Object getById(@Valid HttpServletRequest request,@PathVariable Integer eventId) {
+        return eventsService.getSimpleEventById(request,eventId);
     }
 
     @PostMapping({""})
     @ResponseStatus(HttpStatus.CREATED)
-    public Events create(@Valid @RequestBody SimpleEventDTO newEvent) {
-        return this.eventsService.addEvent(newEvent);
+    public Object create(@Valid HttpServletRequest request, @RequestBody SimpleEventDTO newEvent) {
+        return this.eventsService.addEvent(request,newEvent);
     }
 
     @DeleteMapping({"/{eventId}"})
-    public void delete(@PathVariable Integer eventId) {
-        this.repository.findById(eventId).orElseThrow(() -> {
-            return new ResponseStatusException(HttpStatus.NOT_FOUND, eventId + " does not exist !!!");
-        });
-        this.repository.deleteById(eventId);
+    public Object delete(@Valid HttpServletRequest request, @PathVariable Integer eventId) {
+        return eventsService.deleteEvent(request, eventId);
     }
 
     @PutMapping({"/{eventId}"})
-    public Events updateEvent(@RequestBody Events updateEvent, @PathVariable Integer eventId) {
-        Events event = (Events)this.repository.findById(eventId).map((o) -> {
-            return this.mapEvent(o, updateEvent);
-        }).orElseGet(() -> {
-            updateEvent.setId(eventId);
-            return updateEvent;
-        });
-        return (Events)this.repository.saveAndFlush(event);
+    public Object update(@Valid HttpServletRequest request, @Valid @RequestBody SimpleEventDTO updateEvent, @PathVariable Integer eventId) {
+        return eventsService.updateEvent(request, updateEvent, eventId);
     }
 
-    private Events mapEvent(Events existingEvent, Events updateEvent) {
-        existingEvent.setStartTime(updateEvent.getStartTime());
-        existingEvent.setEventNotes(updateEvent.getEventNotes());
-        return existingEvent;
-    }
+
 }

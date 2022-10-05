@@ -62,6 +62,7 @@ public class LoginController {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail());
         String roles = user.getRoles();
+        String email = user.getEmail();
         System.out.println(roles);
         if(user == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found Email!");
@@ -76,6 +77,6 @@ public class LoginController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new AuthenticationResponse(jwt,roles));
+        return ResponseEntity.ok(new AuthenticationResponse(jwt,roles,email));
     }
 }

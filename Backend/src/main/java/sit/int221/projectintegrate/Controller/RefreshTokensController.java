@@ -35,8 +35,9 @@ public class RefreshTokensController {
         Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
         String token = jwtUtil.createRefreshToken(expectedMap, expectedMap.get("sub").toString());
         String roles = addUserList.getRoles();
+        String email = addUserList.getEmail();
         System.out.println(addUserList.getRoles());
-        return ResponseEntity.ok(new AuthenticationResponse(token,roles));
+        return ResponseEntity.ok(new AuthenticationResponse(token,roles,email));
     }
 
     public Map<String, Object> getMapFromIoJsonwebtokenClaims(DefaultClaims claims) {
