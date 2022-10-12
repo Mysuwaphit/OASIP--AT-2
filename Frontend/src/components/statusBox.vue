@@ -12,7 +12,7 @@ defineProps({
 const appRouter = useRouter()
 const goToHome = () => appRouter.push({ name: 'EventListing' })
 const reload = () => window.location.reload();
-const isLecturer = () => localStorage.getItem('role') === 'lecturer'? appRouter.push({ name: 'CatListing' }):appRouter.push({ name: 'EventListing' })
+const isLecturer = () => localStorage.getItem('role') === 'lecturer'? appRouter.push({ name: 'CatListing' }).then(reload):appRouter.push({ name: 'EventListing' }).then(reload)
 </script>
  
 <template>

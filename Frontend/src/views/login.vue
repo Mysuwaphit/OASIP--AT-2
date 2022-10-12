@@ -2,6 +2,7 @@
   import { ref,onBeforeMount } from 'vue';
   import { useRouter } from 'vue-router' 
   import StatusBox from '../components/statusBox.vue';
+  
   const appRouter = useRouter()
   const goToAddUser = () => appRouter.push({ name: 'AddUser' })
   const goToHome = () => appRouter.push({ name: 'EventListing' })
