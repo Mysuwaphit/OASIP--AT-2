@@ -4,12 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.projectintegrate.DTO.SimpleEventDTO;
+import sit.int221.projectintegrate.Entities.EventCategory;
 import sit.int221.projectintegrate.Entities.Events;
+import sit.int221.projectintegrate.Repository.EventCategoryRepository;
 import sit.int221.projectintegrate.Repository.EventRepository;
 import sit.int221.projectintegrate.Services.EventsService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,8 +38,13 @@ public class EventController {
     @Autowired
     private EventRepository repository;
     @Autowired
-    public EventController(EventRepository repository) {
-        this.repository = repository;
+    private EventCategoryRepository eventCategoryRepository;
+//    @Autowired
+//    private EmailSenderService emailSenderService;
+    @Autowired
+    public EventController(EventCategoryRepository eventCategoryRepository) {
+        this.eventCategoryRepository = eventCategoryRepository;
+//        this.emailSenderService = emailSenderService;
     }
 
 //    @GetMapping("")
@@ -57,6 +66,7 @@ public class EventController {
     @ResponseStatus(HttpStatus.CREATED)
     public Object create(@Valid HttpServletRequest request, @RequestBody SimpleEventDTO newEvent) {
         return this.eventsService.addEvent(request,newEvent);
+//        emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
     }
 
     @DeleteMapping({"/{eventId}"})

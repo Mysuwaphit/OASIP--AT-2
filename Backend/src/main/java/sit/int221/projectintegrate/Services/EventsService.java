@@ -14,12 +14,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.projectintegrate.Entities.Events;
 import sit.int221.projectintegrate.Entities.User;
 import sit.int221.projectintegrate.Exception.ValidationHandler;
+import sit.int221.projectintegrate.Repository.EventCategoryOwnerRepository;
 import sit.int221.projectintegrate.Repository.UserRepository;
 import sit.int221.projectintegrate.Util.JwtUtil;
 import sit.int221.projectintegrate.listMapper;
@@ -33,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 public class EventsService {
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private EventCategoryOwnerRepository eventCategoryOwnerRepository;
     @Autowired
     private UserRepository usersRepository;
     @Autowired
@@ -64,9 +65,12 @@ public class EventsService {
         return modelMapper.map(event, SimpleEventDTO.class);
     }
     public Optional<User> getUserFromRequest(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").substring(7);
-        String userEmail = jwtTokenUtill.extractUsername(token);
-        return  usersRepository.findByEmail(userEmail);
+        if (request.getHeader("Authorization") != null) {
+            String token = request.getHeader("Authorization").substring(7);
+            String userEmail = jwtTokenUtill.extractUsername(token);
+            return  usersRepository.findByEmail(userEmail);
+        }
+        return null;
     }
 
 //    public List<SimpleEventDTO> getAllEvent() {
@@ -85,6 +89,11 @@ public class EventsService {
         } else if (userOwner.get().getRoles().equals("student")) {
             System.out.println("Signin student");
             eventList = eventRepository.findAllByOwner(userOwner.get().getEmail());
+        }else if (userOwner.get().getRoles().equals("lecturer")){
+            System.out.println("Signin lecturer");
+            List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.get().getId());
+            System.out.println(categoriesId);
+            eventList = eventRepository.findAllByEventCategory(categoriesId);
         }
         return listMapper.mapList(eventList, SimpleEventDTO.class, this.modelMapper);
     }
@@ -98,11 +107,14 @@ public class EventsService {
         Optional<User> userOwner = getUserFromRequest(request);
         LocalDateTime currentDateTime;
         currentDateTime = LocalDateTime.now();
-        if (userOwner.get().getRoles().equals("student")) {
-            if (!userOwner.get().getEmail().equals(newEvent.getBookingEmail())) {
-                return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "The booking email must be the same as student's email!!");
+        if(userOwner != null) {
+            if (userOwner.get().getRoles().equals("student")) {
+                if (!userOwner.get().getEmail().equals(newEvent.getBookingEmail())) {
+                    return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "The booking email must be the same as student's email!!");
+                }
             }
         }
+
         if (newEvent.getStartTime().isBefore(currentDateTime)){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, newEvent.getStartTime() + "Is a past!!!");
         }

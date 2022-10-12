@@ -47,17 +47,17 @@ public class LoginController {
     @Autowired
     JwtUserRepository userRepository;
 
-    @PostMapping("/match")
-    @PreAuthorize("hasRole('admin')")
-    public void login(@Validated @RequestBody SimpleLoginDTO body) {
-
-        if(userService.matcher(body.getEmail(), body.getUserpassword()) == true){
-            throw new ResponseStatusException(HttpStatus.OK,"Password Match!");
-        }else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Password Not Match!");
-        }
-
-    }
+//    @PostMapping("/match")
+//    @PreAuthorize("hasRole('admin')")
+//    public void login(@Validated @RequestBody SimpleLoginDTO body) {
+//
+//        if(userService.matcher(body.getEmail(), body.getUserpassword()) == true){
+//            throw new ResponseStatusException(HttpStatus.OK,"Password Match!");
+//        }else {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Password Not Match!");
+//        }
+//
+//    }
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail());

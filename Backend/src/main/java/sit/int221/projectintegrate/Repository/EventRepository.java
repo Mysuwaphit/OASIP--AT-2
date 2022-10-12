@@ -13,6 +13,8 @@ public interface EventRepository extends JpaRepository<Events,Integer> {
      List<Events> findEventByEventCategoryIdEquals(Integer eventCategoryId);
      @Query("select a from Events a where a.bookingEmail = :ownerEmail order by a.startTime DESC")
      List<Events> findAllByOwner(@Param("ownerEmail") String ownerEmail);
+     @Query("select a from Events a where a.id in :idCate")
+     List<Events> findAllByEventCategory(@Param("idCate") List<Integer> idCate);
      List<Events> findAll();
 
 }

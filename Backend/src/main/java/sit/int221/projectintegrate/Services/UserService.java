@@ -44,19 +44,19 @@ public class UserService {
         return repository.saveAndFlush(addUserList);
     }
 
-    public boolean matcher(String email,String password) {
-        Optional<User> userRes = repository.findByEmail(email);
-        User user = userRes.get();
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found Email!");
-        } else {
-            if (encoder.matches(password, user.getUserpassword()) == true) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
+//    public boolean matcher(String email,String password) {
+//        User userRes = repository.findByEmail(email);
+//        User user = userRes.getId();
+//        if (user == null) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not Found Email!");
+//        } else {
+//            if (encoder.matches(password, user.getUserpassword()) == true) {
+//                return true;
+//            } else {
+//                return false;
+//            }
+//        }
+//    }
     public boolean checkRole(String newRole) {
         for (Roles role : Roles.values()){
 //            System.out.println(role.toString());
