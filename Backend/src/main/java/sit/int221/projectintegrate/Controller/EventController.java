@@ -8,6 +8,7 @@ import sit.int221.projectintegrate.Entities.EventCategory;
 import sit.int221.projectintegrate.Entities.Events;
 import sit.int221.projectintegrate.Repository.EventCategoryRepository;
 import sit.int221.projectintegrate.Repository.EventRepository;
+import sit.int221.projectintegrate.Services.EmailSenderService;
 import sit.int221.projectintegrate.Services.EventsService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,12 +40,12 @@ public class EventController {
     private EventRepository repository;
     @Autowired
     private EventCategoryRepository eventCategoryRepository;
-//    @Autowired
-//    private EmailSenderService emailSenderService;
+    @Autowired
+    private EmailSenderService emailSenderService;
     @Autowired
     public EventController(EventCategoryRepository eventCategoryRepository) {
         this.eventCategoryRepository = eventCategoryRepository;
-//        this.emailSenderService = emailSenderService;
+        this.emailSenderService = emailSenderService;
     }
 
 //    @GetMapping("")
@@ -64,9 +65,20 @@ public class EventController {
 
     @PostMapping({""})
     @ResponseStatus(HttpStatus.CREATED)
-    public Object create(@Valid HttpServletRequest request, @RequestBody SimpleEventDTO newEvent) {
+    public Object create(@Valid HttpServletRequest request,@Valid @RequestBody SimpleEventDTO newEvent) {
+        int categoryId = Integer.parseInt(newEvent.getCategory());
+        EventCategory eventCategory = eventCategoryRepository.findById(categoryId).orElseThrow(()->new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Customer id "+ categoryId+
+                "Does Not Exist !!!"
+        ));
+        LocalDateTime time = newEvent.getStartTime();
+        String formattedDate = time.format(DateTimeFormatter.ofPattern("dd-MMM-yy-hh-mm"));
+        String header = "You have made a new appointment for 1 event.";
+        String body = "Your appointment has been registered successfully. \n \n" +
+                "Details  \n" + "Name : " + newEvent.getBookingName() + "\n" +"Clinic : " + eventCategory.getEventCategoryName() +
+                "\n" + "Date : " + formattedDate + "\n" + "Note : " + newEvent.getEventNotes();
+        emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
         return this.eventsService.addEvent(request,newEvent);
-//        emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
     }
 
     @DeleteMapping({"/{eventId}"})

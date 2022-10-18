@@ -80,21 +80,20 @@ public class EventsService {
 
     public List<SimpleEventDTO> getAllEvent(HttpServletRequest request){
         Optional<User> userOwner = getUserFromRequest(request);
-        System.out.println(userOwner.get().getEmail());
+//        System.out.println(userOwner.get().getEmail());
         List<Events> eventList = new ArrayList<>();
+            if (userOwner.get().getRoles().equals("admin")) {
+                System.out.println("Signin admin");
+                eventList = eventRepository.findAll();
+            } else if (userOwner.get().getRoles().equals("student")) {
+                System.out.println("Signin student");
+                eventList = eventRepository.findAllByOwner(userOwner.get().getEmail());
+            } else if (userOwner.get().getRoles().equals("lecturer")) {
+                System.out.println("Signin lecturer");
+                List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.get().getId());
+                eventList = eventRepository.findAllByEventCategory(categoriesId);
+            }
 
-        if (userOwner.get().getRoles().equals("admin")){
-            System.out.println("Signin admin");
-            eventList = eventRepository.findAll();
-        } else if (userOwner.get().getRoles().equals("student")) {
-            System.out.println("Signin student");
-            eventList = eventRepository.findAllByOwner(userOwner.get().getEmail());
-        }else if (userOwner.get().getRoles().equals("lecturer")){
-            System.out.println("Signin lecturer");
-            List<Integer> categoriesId = eventCategoryOwnerRepository.findAllByUserId(userOwner.get().getId());
-            System.out.println(categoriesId);
-            eventList = eventRepository.findAllByEventCategory(categoriesId);
-        }
         return listMapper.mapList(eventList, SimpleEventDTO.class, this.modelMapper);
     }
 
