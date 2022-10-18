@@ -1,5 +1,6 @@
 package sit.int221.projectintegrate.Controller;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,6 +38,8 @@ public class EventController {
     @Autowired
     private EventsService eventsService;
     @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
     private EventRepository repository;
     @Autowired
     private EventCategoryRepository eventCategoryRepository;
@@ -66,16 +69,13 @@ public class EventController {
     @PostMapping({""})
     @ResponseStatus(HttpStatus.CREATED)
     public Object create(@Valid HttpServletRequest request,@Valid @RequestBody SimpleEventDTO newEvent) {
-        int categoryId = Integer.parseInt(newEvent.getCategory());
-        EventCategory eventCategory = eventCategoryRepository.findById(categoryId).orElseThrow(()->new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Customer id "+ categoryId+
-                "Does Not Exist !!!"
-        ));
+        Events addEventList = modelMapper.map(newEvent, Events.class);
+        List<Events> eventList = repository.findEventByEventCategoryIdEquals(addEventList.getEventCategory().getId());
         LocalDateTime time = newEvent.getStartTime();
         String formattedDate = time.format(DateTimeFormatter.ofPattern("dd-MMM-yy-hh-mm"));
         String header = "You have made a new appointment for 1 event.";
         String body = "Your appointment has been registered successfully. \n \n" +
-                "Details  \n" + "Name : " + newEvent.getBookingName() + "\n" +"Clinic : " + eventCategory.getEventCategoryName() +
+                "Details  \n" + "Name : " + newEvent.getBookingName() + "\n" +"Clinic : " + addEventList.getEventCategory().getEventCategoryName() +
                 "\n" + "Date : " + formattedDate + "\n" + "Note : " + newEvent.getEventNotes();
         emailSenderService.sendEmail(newEvent.getBookingEmail() , header , body);
         return this.eventsService.addEvent(request,newEvent);
