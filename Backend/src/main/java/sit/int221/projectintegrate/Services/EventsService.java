@@ -9,24 +9,31 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.projectintegrate.Entities.Events;
 import sit.int221.projectintegrate.Entities.User;
 import sit.int221.projectintegrate.Exception.ValidationHandler;
 import sit.int221.projectintegrate.Repository.EventCategoryOwnerRepository;
 import sit.int221.projectintegrate.Repository.UserRepository;
+import sit.int221.projectintegrate.Services.Storage.StorageService;
 import sit.int221.projectintegrate.Util.JwtUtil;
 import sit.int221.projectintegrate.listMapper;
+
 import sit.int221.projectintegrate.DTO.SimpleEventDTO;
 
 import sit.int221.projectintegrate.Repository.EventRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 
 @Service
 public class EventsService {
@@ -40,7 +47,11 @@ public class EventsService {
     private ModelMapper modelMapper;
     @Autowired
     private listMapper listMapper;
+    @Autowired
+    private StorageService storageService;
 
+    @Autowired
+    private Validator validator;
     private final JwtUtil jwtTokenUtill;
     private final CustomUserDetailsService jwtUserDetailsService;
 
@@ -101,27 +112,61 @@ public class EventsService {
 //        Events e = (Events)this.modelMapper.map(newEvent, Events.class);
 //        return (Events)this.repository.saveAndFlush(e);
 //    }
-
-    public Object addEvent(HttpServletRequest request,SimpleEventDTO newEvent){
-        Optional<User> userOwner = getUserFromRequest(request);
-        LocalDateTime currentDateTime;
-        currentDateTime = LocalDateTime.now();
-        if(userOwner != null) {
-            if (userOwner.get().getRoles().equals("student")) {
-                if (!userOwner.get().getEmail().equals(newEvent.getBookingEmail())) {
-                    return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "The booking email must be the same as student's email!!");
-                }
+public Object addEvent(HttpServletRequest request,SimpleEventDTO newEvent){
+    Optional<User> userOwner = getUserFromRequest(request);
+    LocalDateTime currentDateTime;
+    currentDateTime = LocalDateTime.now();
+    if(userOwner != null) {
+        if (userOwner.get().getRoles().equals("student")) {
+            if (!userOwner.get().getEmail().equals(newEvent.getBookingEmail())) {
+                return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "The booking email must be the same as student's email!!");
             }
         }
-
-        if (newEvent.getStartTime().isBefore(currentDateTime)){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, newEvent.getStartTime() + "Is a past!!!");
-        }
-        Events addEventList = modelMapper.map(newEvent, Events.class);
-        List<Events> eventList = eventRepository.findEventByEventCategoryIdEquals(addEventList.getEventCategory().getId());
-        check(newEvent.getStartTime(), newEvent.getDuration(),eventList );
-        return eventRepository.saveAndFlush(addEventList);
     }
+
+    if (newEvent.getStartTime().isBefore(currentDateTime)){
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, newEvent.getStartTime() + "Is a past!!!");
+    }
+    Events addEventList = modelMapper.map(newEvent, Events.class);
+    List<Events> eventList = eventRepository.findEventByEventCategoryIdEquals(addEventList.getEventCategory().getId());
+    check(newEvent.getStartTime(), newEvent.getDuration(),eventList );
+    return eventRepository.saveAndFlush(addEventList);
+}
+//    public Object addEvent(HttpServletRequest request, SimpleEventDTO newEvent, MultipartFile file){
+//        Set<ConstraintViolation<SimpleEventDTO>> violations = validator.validate(newEvent);
+//        if (!violations.isEmpty()) {
+//            StringBuilder sb = new StringBuilder();
+//            for (ConstraintViolation<SimpleEventDTO> constraintViolation : violations) {
+//                sb.append(constraintViolation.getMessage());
+//            }
+//            throw new ConstraintViolationException("Error occurred: " + sb.toString(), violations);
+//        }
+//
+//        Optional<User> userOwner = getUserFromRequest(request);
+//        LocalDateTime currentDateTime;
+//        currentDateTime = LocalDateTime.now();
+//
+//
+//        if(userOwner != null) {
+//            if (userOwner.get().getRoles().equals("student")) {
+//                if (!userOwner.get().getEmail().equals(newEvent.getBookingEmail())) {
+//                    return ValidationHandler.showError(HttpStatus.BAD_REQUEST, "The booking email must be the same as student's email!!");
+//                }
+//            }
+//        }
+//
+//        Events addEventList = modelMapper.map(newEvent, Events.class);
+//        List<Events> eventList = eventRepository.findEventByEventCategoryIdEquals(addEventList.getEventCategory().getId());
+//        check(newEvent.getStartTime(), newEvent.getDuration(),eventList );
+//        Events addedEvent = eventRepository.saveAndFlush(addEventList);
+//        if(file != null) {
+//            if (!file.isEmpty()) {
+//                storageService.store(file, addedEvent.getId());
+//                return file.getOriginalFilename();
+//            }
+//        }
+//        return addedEvent;
+//    }
 
     public Object deleteEvent(HttpServletRequest request, Integer bookingId){
         Optional<User> userOwner = getUserFromRequest(request);

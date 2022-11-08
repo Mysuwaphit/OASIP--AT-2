@@ -1,8 +1,12 @@
 package sit.int221.projectintegrate.Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.projectintegrate.DTO.SimpleEventDTO;
 import sit.int221.projectintegrate.Entities.EventCategory;
@@ -17,18 +21,6 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 
 
 @RestController
@@ -66,9 +58,15 @@ public class EventController {
         return eventsService.getSimpleEventById(request,eventId);
     }
 
+//    @PostMapping(path = "",consumes = {"multipart/form-data"})
     @PostMapping({""})
     @ResponseStatus(HttpStatus.CREATED)
-    public Object create(@Valid HttpServletRequest request,@Valid @RequestBody SimpleEventDTO newEvent) {
+    public Object create(@Valid HttpServletRequest request, @RequestBody SimpleEventDTO newEvent) {
+//    public Object create(@Valid HttpServletRequest request, @RequestParam("event") String event, @RequestParam(name = "file", required = false) MultipartFile file) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.findAndRegisterModules();
+//        SimpleEventDTO newEvent  = objectMapper.readValue(event, SimpleEventDTO.class);
+
         Events addEventList = modelMapper.map(newEvent, Events.class);
         List<Events> eventList = repository.findEventByEventCategoryIdEquals(addEventList.getEventCategory().getId());
         LocalDateTime time = newEvent.getStartTime();
