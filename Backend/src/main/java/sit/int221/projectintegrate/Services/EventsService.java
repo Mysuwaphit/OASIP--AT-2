@@ -168,17 +168,18 @@ public Object addEvent(HttpServletRequest request,SimpleEventDTO newEvent){
 //        return addedEvent;
 //    }
 
-    public Object deleteEvent(HttpServletRequest request, Integer bookingId){
+    public Object deleteEvent(HttpServletRequest request, Integer eventId){
         Optional<User> userOwner = getUserFromRequest(request);
-        Events event = eventRepository.findById(bookingId).orElseThrow(()->
+        Events event = eventRepository.findById(eventId).orElseThrow(()->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        bookingId + " Does Not Exist !!!"));
+                        eventId + " Does Not Exist !!!"));
         if (userOwner.get().getRoles().equals("student")) {
             if (!userOwner.get().getEmail().equals(event.getBookingEmail())) {
                 return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You are not allowed to delete this event , Please only delete your events.");
             }
         }
-        eventRepository.deleteById(bookingId);
+        eventRepository.deleteById(eventId);
+        storageService.deleteFileById(eventId);
         return event;
     }
 //    public Object updateEvent(HttpServletRequest request,@RequestBody Events updateEvent, @PathVariable Integer eventId) {
