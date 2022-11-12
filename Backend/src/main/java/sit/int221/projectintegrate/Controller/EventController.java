@@ -1,15 +1,11 @@
 package sit.int221.projectintegrate.Controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import sit.int221.projectintegrate.DTO.SimpleEventDTO;
-import sit.int221.projectintegrate.Entities.EventCategory;
 import sit.int221.projectintegrate.Entities.Events;
 import sit.int221.projectintegrate.Repository.EventCategoryRepository;
 import sit.int221.projectintegrate.Repository.EventRepository;
@@ -88,6 +84,12 @@ public class EventController {
     public Object update(@Valid HttpServletRequest request, @Valid @RequestBody SimpleEventDTO updateEvent, @PathVariable Integer eventId) {
         return eventsService.updateEvent(request, updateEvent, eventId);
     }
-
+//    @PutMapping("/{eventId}")
+//    public Object update(@Valid HttpServletRequest request, @RequestParam("event") String event, @RequestParam(name = "file", required = false) MultipartFile file, @PathVariable Integer bookingId) throws JsonProcessingException {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.findAndRegisterModules();
+//        SimpleEventUpdateDTO editEvent  = objectMapper.readValue(event, SimpleEventUpdateDTO.class);
+//        return eventsService.updateEvent(request, editEvent, file, bookingId);
+//    }
 
 }

@@ -9,13 +9,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import sit.int221.projectintegrate.Entities.Events;
 import sit.int221.projectintegrate.Entities.User;
@@ -31,8 +29,6 @@ import sit.int221.projectintegrate.DTO.SimpleEventDTO;
 import sit.int221.projectintegrate.Repository.EventRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 @Service
@@ -231,7 +227,58 @@ public Object addEvent(HttpServletRequest request,SimpleEventDTO newEvent){
         eventRepository.saveAndFlush(event);
         return updateEvent;
     }
-
+//public Object updateEvent(HttpServletRequest request, SimpleEventUpdateDTO updateEvent, MultipartFile file, Integer bookingId){
+//    //check valid
+//    Set<ConstraintViolation<SimpleEventUpdateDTO>> violations = validator.validate(updateEvent);
+//    if (!violations.isEmpty()) {
+//        StringBuilder sb = new StringBuilder();
+//        for (ConstraintViolation<SimpleEventUpdateDTO> constraintViolation : violations) {
+//            sb.append(constraintViolation.getMessage());
+//        }
+//        throw new ConstraintViolationException("Error occurred: " + sb.toString(), violations);
+//    }
+//
+//
+//
+//    Optional<User> userOwner = getUserFromRequest(request);
+//    Events event = eventRepository.findById(bookingId).orElseThrow(()->
+//            new ResponseStatusException(HttpStatus.NOT_FOUND,
+//                    bookingId + " does not exist !!!"));
+//
+//    if (userOwner.get().getRoles().equals("student")) {
+//        if (!userOwner.get().getEmail().equals(event.getBookingEmail())) {
+//            return ValidationHandler.showError(HttpStatus.FORBIDDEN, "You not have permission this event");
+//        }
+//
+//    }
+//
+//    Events updateEventList = modelMapper.map(updateEvent, Events.class);
+//    List<Events> eventList = eventRepository.findEventByEventCategoryIdEquals(updateEventList.getId());
+//    Events update = eventRepository.findById(bookingId).orElseThrow(()->new ResponseStatusException(
+//            HttpStatus.NOT_FOUND, "Booking id "+ updateEventList.getId()+
+//            "Does Not Exist !!!"
+//    ));
+//    eventList.remove(update);
+//    check(updateEvent.getStartTime(), updateEvent.getDuration(), eventList );
+//
+//    event.setStartTime(updateEvent.getStartTime());
+//    event.setEventNotes(updateEvent.getEventNotes());
+//    event.setEventCategory(updateEventList.getEventCategory());
+//    Events updatedEvent = eventRepository.saveAndFlush(event);
+//
+//    if(file != null) {
+//        if (!file.isEmpty()) {
+//            storageService.store(file, updatedEvent.getId());
+//            return file.getOriginalFilename();
+//        } else {
+//            storageService.deleteFileById(updatedEvent.getId());
+//        }
+//    } else {
+//        storageService.deleteFileById(updatedEvent.getId());
+//    }
+//
+//    return updateEvent;
+//}
     public void check(LocalDateTime updateDateTime, Integer newDuration, List<Events> eventList) {
         LocalDateTime newStartTime = updateDateTime;
         LocalDateTime newEndTime = findEndDate(newStartTime, newDuration);
