@@ -1,12 +1,15 @@
 <script setup>
-import SideBar from './components/Sidebar.vue' 
+import SideBar from './components/sidebar.vue' 
+import Snow from './components/snow.vue'
 import { useRouter } from 'vue-router'
 import Login from '../src/views/login.vue';
+import { ref } from 'vue'
 
 const appRouter = useRouter()
 const goToAddEvent = () => appRouter.push({ name: 'addEvent' })
 const goToLogin = () => appRouter.push({ name: 'Login'})
 const goToHome = () => appRouter.push({ name: 'EventListing'})
+const userEmail = ref(localStorage.getItem('email'))
 
 const logOut = () => {
   if(localStorage.getItem('accessToken')){
@@ -17,6 +20,7 @@ const logOut = () => {
     alert("You're not logging In")
 }
 console.log(localStorage.getItem('role'))
+console.log(userEmail.value)
 // const IsLoggingIn = () => localStorage.getItem('accessToken')? console.log(`You're already log In`) : alert("Please log in first.")
 </script>
  
@@ -30,18 +34,27 @@ console.log(localStorage.getItem('role'))
             <SideBar />
         </div> 
 
-        <button type="button" id="login" class="btn btn-primary trigger-btn" @click="goToLogin">Log In</button>
+        <p id="yourUsername" v-if="userEmail != null">{{ userEmail }}</p>
+        <button type="button" id="login" class="btn btn-primary trigger-btn" @click="goToLogin" v-if="userEmail === null">Log In</button>
         <button type="button" id="logout" class="btn btn-primary trigger-btn" @click="logOut">Log Out</button>
 
         <!-- Add event -->
         <!-- <button type="button" @click="goToAddEvent" class="addEvent" id="myBtn">+ Add Event</button> -->
 
         <!-- Show view -->
+        <Snow/>
          <router-view/>
     </div>
+
 </template> 
  
 <style lang="scss">
+body {
+  height: 100vh;
+  background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+  overflow: hidden;
+}
+
 .addEvent{
   background-color: rgba(30, 38, 64, 1);
   border: none;
@@ -160,6 +173,17 @@ body{
   border: none;
 }
 
+#yourUsername{
+  color: white;
+  margin: 15px;
+  font-size:20px;
+  padding: 10px 15px;
+  margin-right:15px;
+  margin-bottom:5px;
+  margin-top: 10px;
+  margin-left:1500px;
+  position: absolute;
+}
 
 button{
     cursor: pointer;
@@ -168,6 +192,7 @@ button{
     outline: none;
     background: none;
 }
+
 .app{
     display: flex;
     main {
@@ -179,4 +204,5 @@ button{
         }
     }
 }
+
 </style>

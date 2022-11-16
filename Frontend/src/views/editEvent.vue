@@ -20,6 +20,7 @@ const token = `Bearer ${localStorage.getItem('accessToken')}`
 const eventList = ref([])
 const eventListDetails = ref([]) 
 
+
 const postRefreshToken = async () => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/refresh`,{
         method: 'GET',
@@ -61,44 +62,133 @@ const getEventList = async () => {
     console.log("No Scheduled Events");
   }
 };
+
 if(status.value === 401){
     console.log("Access token expired!!!!")
     postRefreshToken();
   }
-onBeforeMount(async () => {
-  await getEventList();
-});
 
-const updateEvent = async (editEventId,yourISODateTime,description) => {
-  console.log('success')
-  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events/${editEventId}`,{
-    method: 'PUT',
-    headers: {
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify(
-      {
-      startTime: yourISODateTime,
-      eventNotes: description
+
+//Upload File
+const isUserUploadFile = ref(false)
+let file = new Array() 
+let oldFile = new Array()
+const getFileStatus = ref(0)
+const formData = new FormData();
+
+const getFile = async () => {
+  await fetch(`${import.meta.env.VITE_BASE_URL}/files/${params.eventId}`,{
+        method: 'GET',headers: {'authorization': token}
+  }).then(res => res.json())
+    .then(data => {
+      if(data.status != 500){
+        getFileStatus.value = data.status
+        oldFile.value = data[0]
+        isUserUploadFile.value = true
+        formData.append('file', oldFile[0])
+        console.log(oldFile)
       }
-    )
-  })
-  console.log('olo'+ yourISODateTime)
+      getFileStatus.value = data.status
+    })}
+
+const uploadFile = (event) => {
+  
+  file[0] = event.target.files[0] 
+  console.log(file[0].name)
+  console.log(`file size : ${file[0].size}(your) vs 10485760`) 
+  if(file[0].size <= 10485760) {
+    isUserUploadFile.value = true
+    formData.append('file', file[0]);
+    getFileStatus.value = 0
+    console.log(`formData : ${formData.get('file').name}`)
+    console.log(`Your file size is allow`) 
+  }else{
+    if(getFileStatus.value != 500){
+      isUserUploadFile.value = true
+      formData.append('file', oldFile[0])
+      getFileStatus.value = 1
+      console.log(`formData : ${formData.get('file').name}`)
+      alert('Your file is too large!!! It could be less than 10 MB.')
+      file.splice(0,1)
+    }
+  }
+  console.log(`isUserUploadFile: ${isUserUploadFile.value}`)
+  return formData,file
+}
+//remove file 
+const removeFile = async () => {
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/files/${params.eventId}`, {
+    method: "DELETE",
+    headers: {
+          // 'content-type': 'application/json',
+          'authorization': token
+    }
+  });
   if (res.status === 200) {
-    const add = await res.json()
-    eventList.value.push(add)
-    clearForm();
-    console.log('added successfully')
-    success.value = true
-  } else if(res.status === 401){
-    console.log("Access token expired!!!!")
-    postRefreshToken();
-  }  
-  else {
-    console.log('error, cannot be added')
+    file.splice(0,1)
+    isUserUploadFile.value = false
+    console.log("delete file successfully");
+  } else {
+    console.log("error,cannot delete file");
   }
 }
 
+// Update Event
+const updateEvent = async (editEventId,name,email,duration,selectCategory,yourISODateTime,description,formData) => {
+console.log(formData)
+  // Update data
+  const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events/${editEventId}`,{
+    method: 'PUT',
+    headers: {
+      'content-type': 'application/json',
+      'Authorization': token
+    },
+    body: JSON.stringify(
+      {
+      bookingEmail: email,
+      bookingName: name,
+      category: selectCategory.eventCategoryName,
+      startTime: yourISODateTime,
+      eventNotes: description,
+      eventCategory: selectCategory,
+      duration : duration
+      }
+    )
+  }).then(res => res.json())
+  .then(data => {
+    if(data.status === 200){
+    eventList.value.push(data)
+    clearForm();
+    console.log('added successfully')
+    success.value = true
+    }else if(data.status === 401){
+    console.log("Access token expired!!!!")
+    postRefreshToken();}
+  }).catch(err => console.log(err))
+
+ // Update File 
+  if(getFileStatus.value != 500 && isUserUploadFile.value === true){
+    console.log('Upload File process')
+    // console.log(`In Fetch : ${formData.get('file').name}`)
+    const resFile = await fetch(`${import.meta.env.VITE_BASE_URL}/files/${editEventId}`,{
+      method: 'POST',
+      headers: {
+        // 'Content-Type': 'multipart/form-data',
+        'Authorization': token
+      },
+      body : formData
+    })
+    .then(res => res.json())
+    .then(data => {if(data.status === 200)console.log(`successfully added file ${data}`)})
+    .catch(err => console.log(err))
+  }
+
+}
+
+onBeforeMount(async () => {
+  await getEventList();
+  await getFile();
+});
   // Handle Date and Time 
 const yourISODateTime = computed(() => {
   return new Date(yourDateTime.value).toISOString()
@@ -120,6 +210,7 @@ const validTime = () => {
 const clearForm = () => {
   yourDateTime.value = dateValue.value
   description.value = noteValue.value
+  file.splice(0,1)
   goBack()
   return console.log('clear');
 }
@@ -151,14 +242,23 @@ const clearForm = () => {
                 <div class="form-group">
                     <label for="message-text" class="col-form-label">Description :</label>
                     
-                    <textarea class="form-control" id="message-text"  maxlength="500" type="text" v-model="description" @vnode-before-mount="noteValue = eventListDetail.eventNotes" >{{eventListDetail.eventNotes}}</textarea> 
+                    <textarea class="form-control" id="message-text"  maxlength="500" type="text" v-model="description" @vnode-before-mount="noteValue = eventListDetail.eventNotes" >{{ eventListDetail.eventNotes }}</textarea> 
+                </div>
+
+                <!-- File -->
+                <div class="form-group">
+                  <label for="message-text" class="col-form-label">Your file :</label>
+                  <input type="file" ref="file" class="form-control" id="recipient-email" @change="uploadFile" :data-default-value="oldFile"/> 
+                  <button @click="removeFile" class="close-icon" aria-label="Remove"><span class="material-symbols-outlined" @click="isUserUploadFile = false">delete_forever</span></button>
                 </div>
                 </form>
               </div>
               <!-- Footer -->
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="cancel" data-dismiss="modal" @click="clearForm()">cancel</button>
-                <button type="button" class="btn btn-primary trigger-btn" id="save" href="#myModal" data-toggle="modal" @click="validTime && updateEvent(eventListDetail.id,yourISODateTime,description)">save</button>
+                <button type="button" class="btn btn-primary trigger-btn" id="save" href="#myModal" data-toggle="modal" @click="validTime && 
+                updateEvent(eventListDetail.id,eventListDetail.bookingName,eventListDetail.bookingEmail,eventListDetail.duration,eventListDetail.eventCategory,yourISODateTime,description,(getFileStatus != 500 && isUserUploadFile === true)? formData: `No file`)">
+                save</button>
                 <button type="button" class="material-symbols-outlined" @click="goBack" id="backhome">arrow_back</button>
               </div>
 
@@ -168,6 +268,20 @@ const clearForm = () => {
 </template>
  
 <style lang="scss" scoped>
+.close-icon{
+  position: absolute;
+  padding: -5%;
+  padding-left: 0.2%;
+  padding-right: 0.2%;
+  margin-left: 400px; 
+  margin-top: -50px;
+  background: #ff5858;
+  border-radius:10px;
+}
+.close-icon:hover{
+  background-color:rgb(71, 10, 22);
+  transition: all .1s ease-in-out;
+}
 #bookingname::-webkit-scrollbar-thumb{
   border-radius: 20px;
   background: rgb(255, 255, 255);
@@ -203,7 +317,7 @@ const clearForm = () => {
   height:50px;
   border-radius:30px;
   font-size: 25px;
-  margin-top: 90px;
+  margin-top: 200px;
   top:700px;
   left: 390px;
   position: absolute;
@@ -350,7 +464,7 @@ background-color: rgba(229, 229, 229, 1);
 opacity: 80%;
 border-radius: 20px;
 width: 1000px;
-height: 700px;
+height: 800px;
 margin-top: 180px;
 margin-left: 400px;
 padding: 50px;
@@ -367,14 +481,14 @@ font-size: 30px;
 
 #save {
    background-color:rgba(3, 133, 0, 1);
-   margin: 30px;
+   margin: 250px;
    margin-right: 200px;
    position: relative;
 }
 
 #cancel {
    background-color: rgba(146, 44, 64, 1);
-   margin: 30px;
+   margin: 250px;
    margin-right: 550px; 
    position: relative;
 }
@@ -385,7 +499,7 @@ font-size: 30px;
   border-radius:30px;
   font-size: 25px;
   font-weight: bold;
-  margin-top: 230px;
+  margin-top: 330px;
   position: absolute;
 }
 

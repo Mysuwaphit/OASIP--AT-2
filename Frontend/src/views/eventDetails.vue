@@ -50,12 +50,51 @@ const getEventList = async () => {
     console.log("No Scheduled Events");
   }
 };
+
+
+
+let file = ref('')
+const haveFile = ref(false)
+const getEventFile = async () => {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/files/${params.eventId}`,{
+          method: 'GET',
+          headers: {
+            // 'content-type': 'multipart/form-data ',
+            'authorization': token
+          }
+    }).then(res => res.json())
+    .then(data => { 
+      if(data.status != 500){
+        file.value = data[0]  
+        haveFile.value = true
+        console.log(file.value)
+        }
+    }).catch(err => err)
+  };
+
+// Download File
+// let fileDownload = ref('')
+// let downloaded = async () => { await fetch(`${import.meta.env.VITE_BASE_URL}/files/${params.eventId}/${file.value}`,{
+//           method: 'GET',
+//           headers: {
+//             // 'content-type': 'application/json',
+//             'authorization': token,
+//             'responseType': 'blob'
+//           }}).then(res => res.blob())
+//           .then(data => {
+//             const newBlob = new Blob([data])
+//             fileDownload.value = window.URL.createObjectURL(newBlob)
+//             // console.log(`download data : ${data}`)
+//             console.log(`download data : ${fileDownload.value}`)
+//           })}
+
 if(status.value === 401){
     console.log("Access token expired!!!!")
     postRefreshToken();
   }
 onBeforeMount(async () => {
   await getEventList();
+  await getEventFile();
 });
 
   // Handle Date and Time
@@ -80,7 +119,10 @@ const getEndTime = ref((e) =>{
    console.log(`new Time => ${endTime.value}`);
    return new Date(endTime.value.getTime() + e.duration * 60000).toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'})
 })
+
 const role = localStorage.getItem('role')
+const path = `${import.meta.env.VITE_BASE_URL}/files/${params.eventId}/`
+
 </script>
  
 <template>
@@ -95,13 +137,14 @@ const role = localStorage.getItem('role')
                 <p>Email : </p> <p id="email">{{  eventListDetails.bookingEmail }}</p>
                 <p>Duration : </p> <p id="duration">{{ eventListDetails.duration + " Minutes" }} </p>
                 <p>Start Date : </p> <p id="startDate" >{{ getDate(eventListDetails) }}</p>
-                <p>Start Time : </p> <p id="startTime" >{{ getTime(eventListDetails) }}</p>
+                <span id="Titlestarttime"> <p>Start Time : </p> <p id="startTime" >{{ getTime(eventListDetails) }}</p> </span> 
                 <p>End Date :</p> <p id="endDate">{{ getDate(eventListDetails) }}</p>
-                <p>End Time : </p><p id="endTime">{{ getEndTime(eventListDetails) }}</p>
+                <span id="Titleendtime"> <p>End Time : </p><p id="endTime">{{ getEndTime(eventListDetails) }}</p> </span>
                 <p >Description :</p> 
                 <p id="description" >{{  eventListDetails.eventNotes }}</p>
+                <p v-if="haveFile === true" > File : &nbsp;&nbsp;&nbsp;<a :href="path + file" id="download" class="btn btn-primary py-3 px-3" :download="file" >{{ file }}</a></p>
           </div>
-              <button type="button" id="delete" class="material-symbols-outlined trigger-btn" href="#myModal" data-toggle="modal" v-show="role === 'admin' || role === 'student'">delete</button>
+              <button type="button" id="delete" class="material-symbols-outlined trigger-btn" href="#myModal" data-toggle="modal" v-show="role === 'admin' || role === 'student'" >delete</button>
               <button type="button" class="material-symbols-outlined" @click="goBack" id="backhome">arrow_back</button>
         </div>
         
@@ -111,6 +154,24 @@ const role = localStorage.getItem('role')
 </template>
  
 <style lang="scss" scoped>
+#download{
+  background-color: rgb(28, 42, 76);
+  border-color: rgb(28, 42, 76);
+}
+#download:hover{
+  background-color: #8fafff;
+  border-color:  #8fafff;
+}
+#Titleendtime{
+  position: absolute;
+  margin-left: 18%;
+  margin-top: -60px;
+}
+#Titlestarttime{
+  position: absolute;
+  margin-left: 18%;
+  margin-top: -60px;
+}
 #email{
   overflow: hidden;
   overflow-x:auto;

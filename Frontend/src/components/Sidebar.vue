@@ -32,22 +32,22 @@ const role = localStorage.getItem('role')? localStorage.getItem('role') : 'guest
         <span class="text">All Event</span>
       </router-link>
 
-      <router-link class="button" to="/allCategory" v-if="role === 'admin' || role === 'lecturer'">
+      <router-link class="button" :to="{ name: 'CatListing'}" v-if="role === 'admin' || role === 'lecturer'">
         <span class="material-symbols-outlined"> category </span>
         <span class="text">All Category</span>
       </router-link>
 
-      <router-link class="button" to="allUser" v-if="role === 'admin'">
+      <router-link class="button" :to="{ name: 'allUser'}" v-if="role === 'admin'">
         <span class="material-symbols-outlined">groups</span>
         <span class="text">All Users</span>
       </router-link>
 
-      <router-link class="button" to="addevent" v-if="role === 'admin' || role === 'student' || role === 'guest'">
+      <router-link class="button" :to="{ name: 'addEvent'}" v-if="role === 'admin' || role === 'student' || role === 'guest'">
         <span class="material-symbols-outlined"> calendar_add_on </span>
         <span class="text">Add Event</span>
       </router-link>
 
-      <router-link class="button" to="addcategory" v-if="role === 'admin' || role === 'lecturer'">
+      <router-link class="button" :to="{ name: 'AddCategory'}" v-if="role === 'admin' || role === 'lecturer'">
         <span class="material-symbols-outlined"> add </span>
         <span class="text">Add Category</span>
       </router-link>

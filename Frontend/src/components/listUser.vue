@@ -31,8 +31,6 @@ props.users.sort((a, b) => (a.username > b.username) ? 1 : -1);
                     <p id="circle"></p> 
                     
                     <p id="username">{{ user.username }}</p>
-                    <!-- <p id="time"> {{ getTime(event.startTime)}}</p>
-                    <p id="startdate">{{ getDate(event.startTime) }}</p> -->
                     <p id="role" >{{ user.roles }}</p>
                     <p id="email" >{{ user.email }}</p>
               </span>        

@@ -109,6 +109,10 @@ const goToHome = () => appRouter.push({ name: 'EventListing' })
 const removeEvent = async (removeEventId) => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/events/${removeEventId}`, {
     method: "DELETE",
+    headers: {
+          // 'content-type': 'application/json',
+          'authorization': token
+    }
   });
   if (res.status === 200) {
     eventList.value = eventList.value.filter((e) => e.id !== removeEventId);
@@ -122,6 +126,10 @@ const removeEvent = async (removeEventId) => {
 const removeUser = async (removeUserId) => {
   const res = await fetch(`${import.meta.env.VITE_BASE_URL}/users/${removeUserId}`, {
     method: "DELETE",
+    headers: {
+          // 'content-type': 'application/json',
+          'authorization': token
+    }
   });
   if (res.status === 200) {
     eventList.value = eventList.value.filter((e) => e.id !== removeUserId);
