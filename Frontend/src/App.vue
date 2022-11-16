@@ -1,6 +1,6 @@
 <script setup>
-import SideBar from './components/sidebar.vue' 
-import Snow from './components/snow.vue'
+import SideBar from '../components/Sidebar.vue' 
+import Snow from '../components/snow.vue'
 import { useRouter } from 'vue-router'
 import Login from '../src/views/login.vue';
 import { ref } from 'vue'
