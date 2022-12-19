@@ -164,7 +164,7 @@ const addUser = async (validatedName,validatedEmail,selectedRole,firstPassword) 
         </div>
       </div>
     </div>
-    <SuccessBox/>
+    <SuccessBox />
 </template> 
 <style lang="scss" scoped>
 #backhome:hover {

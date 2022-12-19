@@ -163,14 +163,16 @@ const path = `${import.meta.env.VITE_BASE_URL}/files/${params.eventId}/`
   border-color:  #8fafff;
 }
 #Titleendtime{
-  position: absolute;
-  margin-left: 18%;
+  position: relative;
+  margin-right: 400px;
   margin-top: -60px;
+  float:right ;
 }
 #Titlestarttime{
-  position: absolute;
-  margin-left: 18%;
+  position: relative;
+  margin-right: 390px;
   margin-top: -60px;
+  float:right ;
 }
 #email{
   overflow: hidden;

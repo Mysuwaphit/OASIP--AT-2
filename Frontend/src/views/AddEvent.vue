@@ -2,16 +2,16 @@
 import { ref, onBeforeMount, computed} from "vue";
 import { useRouter } from 'vue-router';
 import SuccessBox from '../components/successBox.vue'
-// import FileHandle from '../components/fileHandle.vue'
-// import  createUploader  from  '../components/fileUploader.js'
+import Alert from '../components/alertfilebox.vue'
 
-// const { uploadFiles } = createUploader('YOUR URL HERE')
 const now = new Date().toISOString().substring(0,16)
 const selectCategory = ref([])
 const bookingEmail = ref(localStorage.getItem('email'))
 const bookingName = ref(null)
 const yourDateTime = ref(now)
 const description = ref('')
+const alertFile = ref(false)
+
 
 localStorage.getItem('role')? localStorage.getItem('role'):localStorage.setItem('role','guest')
 const role = localStorage.getItem('role')
@@ -105,10 +105,15 @@ const uploadFile = (event) =>{
   console.log(`isUserUploadFile: ${isUserUploadFile.value}`)
   console.log(file[0].name)
   console.log(`file size : ${file[0].size}(your) vs 10485760`) 
-  if(file[0].size <= 10485760) {console.log(`Your file size is allow`) }else{
+  if(file[0].size <= 10485760) {
+    // alertFile.value = false;
+    console.log(`Your file size is allow`)}
+  else{
+    // alertFile.value = true;
     alert('Your file is too large!!! It could be less than 10 MB.')
     file.splice(0,1)
   }
+  console.log("alertfile : " + alertFile.value)
     formData.append('file', file[0]);
     console.log(`formData : ${formData.get('file').name}`)
   return formData,file
@@ -147,11 +152,11 @@ const addEvent = async (validatedName,validatedEmail,selectCategory,yourISODateT
         )
       }).then(res => res.json())
     .then(data => {
+      // isEvent.value = 'event'
       // console.log(`data : ${data.value}`)
       eventStatus.value = true
       if(data.status === 201 && data.status !== 400) {
         eventList.value.push(data) 
-        
         clearForm()
       }
       eventId = data.id
@@ -177,10 +182,10 @@ const addEvent = async (validatedName,validatedEmail,selectCategory,yourISODateT
         )
     }).then(res => res.json())
     .then(data =>  {
+      // isEvent.value = 'event'
       eventStatus.value = true
       if(data.status === 201 && data.status !== 400) {
         eventList.value.push(data) 
-        
         clearForm()
       }
       return eventId = data.id
@@ -366,7 +371,8 @@ const clearForm = () => {
         </div>
       </div>
     </div>
-    <SuccessBox v-if="eventStatus === true || fileStatus === true"/>
+     <Alert v-if="alertFile === true" /> 
+    <SuccessBox/>
 </template> 
 <style lang="scss" scoped>
 .close-icon{

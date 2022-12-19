@@ -3,7 +3,15 @@ import { useRouter } from 'vue-router';
 
 const appRouter = useRouter()
 // const goToHome = () => appRouter.push({ name: 'EventListing' })
+const goToHome = () => appRouter.go('EventListing')
+const goToUser = () => appRouter.go('allUser')
 const goBack = () => appRouter.go(-1)
+const props = defineProps({
+  whatSuccess: {
+    type: String,
+    require: true
+  }
+})
 </script>
  
 <template>
@@ -18,10 +26,10 @@ const goBack = () => appRouter.go(-1)
 				<h4 class="modal-title w-100">Awesome!</h4>	
 			</div>
 			<div class="modal-body">
-				<p class="text-center">Your booking has been confirmed. Check your event for detials.</p>
+				<p class="text-center">Added  successfully.</p>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-success btn-block" data-dismiss="modal" @click="goBack">OK</button>
+				<button class="btn btn-success btn-block" data-dismiss="modal" @click="goBack()">OK</button>
 			</div>
 		</div>
 	</div>

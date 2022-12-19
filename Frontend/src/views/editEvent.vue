@@ -111,6 +111,7 @@ const uploadFile = (event) => {
       alert('Your file is too large!!! It could be less than 10 MB.')
       file.splice(0,1)
     }
+    alert('Your file is too large!!! It could be less than 10 MB.')
   }
   console.log(`isUserUploadFile: ${isUserUploadFile.value}`)
   return formData,file
@@ -182,13 +183,14 @@ console.log(formData)
     .then(data => {if(data.status === 200)console.log(`successfully added file ${data}`)})
     .catch(err => console.log(err))
   }
-
+goBack();
 }
 
 onBeforeMount(async () => {
   await getEventList();
   await getFile();
 });
+
   // Handle Date and Time 
 const yourISODateTime = computed(() => {
   return new Date(yourDateTime.value).toISOString()
